@@ -1,13 +1,13 @@
 def main():
 
-    input_file = open('input202103.txt', 'r')
+    input_file = open("input202103.txt", "r")
 
     current_line = 0
     length_of_lines = 0
 
     nested_list_storing_all_input_digits = []
 
-    #This loop goes through each line of the file and stores it's values in a list of list
+    # This loop goes through each line of the file and stores it's values in a list of list
     for line in input_file:
 
         current_line += 1
@@ -20,7 +20,7 @@ def main():
         if current_line == 1:
             for digit in current_line_contents:
                 nested_list_storing_all_input_digits.append([int(digit)])
-                length_of_lines +=1
+                length_of_lines += 1
 
         else:
             position_on_line = 0
@@ -29,16 +29,16 @@ def main():
                 nested_list_storing_all_input_digits[position_on_line].append(digit)
                 position_on_line += 1
 
-    #print("Below is all the input data, stored in a list of list:")
-    #print(nested_list_storing_all_input_digits)
+    # print("Below is all the input data, stored in a list of list:")
+    # print(nested_list_storing_all_input_digits)
 
     calculate_oxygen_rating = nested_list_storing_all_input_digits
     calculate_c02_rating = nested_list_storing_all_input_digits
 
-    #iterate through each digit, diritmine which lines should be deleted and then delete them.
+    # iterate through each digit, diritmine which lines should be deleted and then delete them.
     for element in nested_list_storing_all_input_digits:
 
-        #calculate the nmber of 1s and 0s at this digit
+        # calculate the nmber of 1s and 0s at this digit
         number_of_ones = 0
         number_of_zeros = 0
 
@@ -51,7 +51,7 @@ def main():
         positions_to_be_deleted_from_oxygen = []
         positions_to_be_deleted_from_c02 = []
 
-        #make lists of which lines need to be deleted
+        # make lists of which lines need to be deleted
         if number_of_ones >= number_of_zeros:
 
             counter = -1
@@ -63,7 +63,6 @@ def main():
                     positions_to_be_deleted_from_oxygen.append(counter)
                 if n == 1:
                     positions_to_be_deleted_from_c02.append(counter)
-
 
         if number_of_ones < number_of_zeros:
 
@@ -79,7 +78,7 @@ def main():
 
         positions_deleted = 0
 
-        #delete all the positions that you detirmined should be deleted
+        # delete all the positions that you detirmined should be deleted
         for position in positions_to_be_deleted_from_oxygen:
 
             for b in calculate_oxygen_rating:
@@ -98,5 +97,6 @@ def main():
 
     print(f"The oxygen generator rating in binary is: {calculate_oxygen_rating}")
     print(f"The C02 scrubber ratting in binary is: {calculate_c02_rating}")
+
 
 main()

@@ -1,6 +1,6 @@
 def main():
 
-    input_file = open('input202102.txt', 'r')
+    input_file = open("input202102.txt", "r")
 
     current_line_contents = []
 
@@ -21,7 +21,7 @@ def main():
 
         if "forward" in current_line_contents[0]:
             list_of_forward_directional_inputs.append(int(current_line_contents[1]))
-            depth += (aim * int(current_line_contents[1]))
+            depth += aim * int(current_line_contents[1])
 
         elif "up" in current_line_contents[0]:
             aim -= int(current_line_contents[1])
@@ -35,5 +35,6 @@ def main():
     print(f"The final horizontial position is: {final_horizontal_position}")
     print(f"The final depth is: {depth}")
     print(f"The answer to the problem is: {answer}")
+
 
 main()

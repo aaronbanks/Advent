@@ -1,5 +1,5 @@
 def main():
-    input_file = open('input201502.txt', 'r')
+    input_file = open("input201502.txt", "r")
 
     total_area_required = 0
     current_line = 0
@@ -24,9 +24,12 @@ def main():
         required_paper = 2 * sum(sides) + smallest_side_area
         total_area_required += required_paper
 
-        print(f"The surface area required to wrap the gift on line {current_line} is {required_paper} square feet")
+        print(
+            f"The surface area required to wrap the gift on line {current_line} is {required_paper} square feet"
+        )
 
     print(f"The total paper required to wrap all the gifts is: {total_area_required}")
     input_file.close()
+
 
 main()

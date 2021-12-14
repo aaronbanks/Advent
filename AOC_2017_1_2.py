@@ -7,7 +7,7 @@ def main():
 
     position_on_line = 0
 
-    with open('input201701.txt', 'r') as input:
+    with open("input201701.txt", "r") as input:
 
         line = input.readlines()
         clean_line = line[0].strip()
@@ -18,7 +18,9 @@ def main():
             position_on_line += 1
 
             if position_on_line + target_digit_distance >= len(clean_line):
-                target_digit_location = (position_on_line + target_digit_distance) - len(clean_line) -1
+                target_digit_location = (
+                    (position_on_line + target_digit_distance) - len(clean_line) - 1
+                )
             else:
                 target_digit_location = position_on_line + target_digit_distance - 1
 
@@ -26,5 +28,6 @@ def main():
                 sum += int(character)
 
     print(sum)
+
 
 main()

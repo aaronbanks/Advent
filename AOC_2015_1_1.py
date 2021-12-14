@@ -1,33 +1,23 @@
 def main():
-    input_file = open('input201501.txt', 'r')
+    input_file = open("input201501.txt", "r")
 
     floor = 0
 
     EOF = False
 
-    character_position = 0
-
     while EOF == False:
         current_character = input_file.read(1)
-        character_position += 1
 
-        print(f"The current character position is: {character_position}")
-        print(f"The current floor is: {floor}")
-
-        if current_character == '(':
+        if current_character == "(":
             floor += 1
-        elif current_character == ')':
+        elif current_character == ")":
             floor -= 1
         elif current_character == "":
             EOF = True
         else:
             pass
 
-        if floor < 0:
-            print(f"Santa has entered the basement on character position: {character_position}")
-            break
-
-    #Below is an alternate way to write this.
+    # Below is an alternate way to write this.
     # for line in input_file:
     #     for character in line:
     #         if character == '(':
@@ -37,6 +27,9 @@ def main():
     #         else:
     #             pass
 
+    print(f"The instructions take santa to floor: {floor}")
+
     input_file.close()
+
 
 main()

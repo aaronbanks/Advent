@@ -1,5 +1,5 @@
 def main():
-    with open('input201702.txt', 'r') as input:
+    with open("input201702.txt", "r") as input:
 
         checksum = 0
 
@@ -19,4 +19,6 @@ def main():
             print(int(sorted_list[list_length - 1]) - (sorted_list[0]))
 
         print(checksum)
+
+
 main()

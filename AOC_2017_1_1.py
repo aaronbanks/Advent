@@ -1,6 +1,6 @@
 def main():
 
-    with open('input201701.txt', 'r') as input:
+    with open("input201701.txt", "r") as input:
 
         sum_of_digits = 0
 
@@ -20,7 +20,7 @@ def main():
             input.seek(location_on_line)
 
             if location_on_line == 1:
-                 first_character_on_line = character
+                first_character_on_line = character
 
             if location_on_line == len(input_line[0]) - 1:
                 if character == first_character_on_line:
@@ -31,5 +31,6 @@ def main():
                 sum_of_digits += int(current_digits[0])
 
         print(sum_of_digits)
+
 
 main()

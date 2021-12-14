@@ -1,5 +1,5 @@
 def main():
-    input_file = open('input201502.txt', 'r')
+    input_file = open("input201502.txt", "r")
 
     current_line = 0
 
@@ -17,16 +17,17 @@ def main():
         dimensions = [length, width, height]
 
         ribbon_for_bow = length * width * height
-        #print(ribbon_for_bow)
+        # print(ribbon_for_bow)
 
         ribbon_for_wrap = 2 * sum(sorted(dimensions)[0:2])
 
-        #print(ribbon_for_wrap)
+        # print(ribbon_for_wrap)
 
         total_ribbon_needed += ribbon_for_bow + ribbon_for_wrap
 
     print(f"Total ribbon needed is: {total_ribbon_needed}")
 
     input_file.close()
+
 
 main()
