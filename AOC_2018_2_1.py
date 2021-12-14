@@ -31,11 +31,6 @@ def main():
                 boxes_with_three_of_same += 1
                 box_has_three_of_same == True
 
-            # print(set_of_characters_counted)
-            # print(box_has_two_of_same)
-            # print(boxes_with_three_of_same)
-
-
     checksum = boxes_with_two_of_same * boxes_with_three_of_same
     print(checksum)
 
