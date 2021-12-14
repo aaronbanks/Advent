@@ -27,5 +27,9 @@ def main():
                     break
 
         print(int(checksum))
+        print(int(checksum))
+        print(int(checksum))
+        print(int(checksum))
+
 
 main()
