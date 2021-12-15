@@ -1,4 +1,4 @@
-from AOC_Functions import read_lines
+from ..AOC_Functions import read_lines
 import math
 
 
