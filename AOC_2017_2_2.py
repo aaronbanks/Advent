@@ -1,5 +1,6 @@
 from AOC_Functions import read_lines
 
+
 def main():
 
     input = read_lines("input201702.txt")
@@ -30,5 +31,6 @@ def main():
                 break
 
     print(int(checksum))
+
 
 main()

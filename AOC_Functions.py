@@ -2,8 +2,7 @@ def read_lines(file_name):
 
     return_list = []
 
-    with open(file_name, 'r') as input:
-
+    with open(file_name, "r") as input:
 
         for line in input:
             return_list.append(line.strip())

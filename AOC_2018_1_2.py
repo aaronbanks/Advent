@@ -1,5 +1,6 @@
 from AOC_Functions import read_lines
 
+
 def main():
 
     frequency = 0
@@ -11,7 +12,7 @@ def main():
     while True:
         for line in input:
 
-            if line[0]  == "+":
+            if line[0] == "+":
                 modifier_is_positive = True
             elif line[0] == "-":
                 modifier_is_positive = False
@@ -33,5 +34,6 @@ def main():
             break
 
     print(first_double)
+
 
 main()

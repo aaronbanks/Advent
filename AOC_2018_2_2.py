@@ -1,5 +1,6 @@
 from AOC_Functions import read_lines
 
+
 def main():
 
     input = read_lines("input201802.txt")
@@ -41,15 +42,6 @@ def main():
 
         if box_pair_found == True:
             break
-
-main()
-
-
-
-
-
-
-
 
 
 main()

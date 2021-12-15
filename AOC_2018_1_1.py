@@ -1,5 +1,6 @@
 from functions import read_lines
 
+
 def main():
 
     frequency = 0
@@ -8,7 +9,7 @@ def main():
 
     for line in input:
 
-        if line[0]  == "+":
+        if line[0] == "+":
             modifier_is_positive = True
         elif line[0] == "-":
             modifier_is_positive = False
@@ -21,5 +22,6 @@ def main():
             frequency -= int(line_value)
 
     print(frequency)
+
 
 main()

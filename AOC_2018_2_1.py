@@ -1,5 +1,6 @@
 from AOC_Functions import read_lines
 
+
 def main():
 
     checksum = 0
@@ -33,5 +34,6 @@ def main():
 
     checksum = boxes_with_two_of_same * boxes_with_three_of_same
     print(checksum)
+
 
 main()
