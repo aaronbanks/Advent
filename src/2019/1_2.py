@@ -1,4 +1,4 @@
-from ....functions import read_lines
+from ..functions import read_lines
 import math
 
 
