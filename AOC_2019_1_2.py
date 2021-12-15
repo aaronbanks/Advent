@@ -1,6 +1,7 @@
 from AOC_Functions import read_lines
 import math
 
+
 def main():
 
     input = read_lines("input201901.txt")
@@ -31,9 +32,9 @@ def main():
 
             fuel_req_for_fuel += recursive_fuel_calculation
 
-
         total_fuel_req += fuel_req_for_module + fuel_req_for_fuel
 
     print(total_fuel_req)
+
 
 main()
