@@ -1,13 +1,14 @@
-from ..functions import read_lines
+from ..functions import run_solution
+
+input_filename = "./inputs/202002.txt"
+expected_output = 251
 
 
-def main():
-
-    input = read_lines("./inputs/202002.txt")
+def solution(input_lines):
 
     valid_passwords = 0
 
-    for line in input:
+    for line in input_lines:
         current_line_contents = line.split(": ", 2)
 
         password_policy = current_line_contents[0]
@@ -34,6 +35,8 @@ def main():
             valid_passwords += 1
 
     print(valid_passwords)
+    return valid_passwords
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

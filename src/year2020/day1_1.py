@@ -1,9 +1,12 @@
-from ..functions import read_lines
+from ..functions import run_solution
+
+input_filename = "./inputs/202001.txt"
+expected_output = 299299
 
 
-def main():
+def solution(input_lines):
 
-    input = list(map(int, read_lines("./inputs/202001.txt")))
+    input = list(map(int, input_lines))
 
     value_1 = 0
     value_2 = 0
@@ -25,7 +28,10 @@ def main():
         if solved == True:
             break
 
-    print(value_1 * value_2)
+    result = value_1 * value_2
+    print(result)
+    return result
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)
