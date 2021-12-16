@@ -1,4 +1,10 @@
-def main():
+from ..functions import run_solution
+
+input_filename = "./inputs/202102.txt"
+expected_output = 1693300
+
+
+def solution(input_lines):
     current_line_direction = None
     current_line = 0
     current_line_contents = []
@@ -7,9 +13,7 @@ def main():
     list_of_up_directional_inputs = []
     list_of_down_directional_inputs = []
 
-    input_file = open("./inputs/202102.txt", "r")
-
-    for line in input_file:
+    for line in input_lines:
 
         current_line += 1
 
@@ -48,5 +52,8 @@ def main():
     print(f"The final depth is: {final_depth}")
     print(f"The answer to the problem is: {answer}")
 
+    return answer
 
-main()
+
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

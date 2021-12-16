@@ -1,6 +1,10 @@
-def main():
+from ..functions import run_solution
 
-    input_file = open("./inputs/202103.txt", "r")
+input_filename = "./inputs/202103.txt"
+expected_output = 4191876
+
+
+def solution(input_lines):
 
     current_line = 0
     length_of_lines = 0
@@ -20,7 +24,7 @@ def main():
 
     # This loop goes through each line of the file and stores it's values in a list of list
     # THIS APPEARS TO EXECUTE AS PLANNED
-    for line in input_file:
+    for line in input_lines:
 
         current_line += 1
 
@@ -91,5 +95,8 @@ def main():
 
     print(f"The power power consumption of the submarine i: {power_consumption}")
 
+    return power_consumption
 
-main()
+
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

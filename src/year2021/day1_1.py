@@ -1,14 +1,16 @@
-def main():
-    input_file = open("./inputs/202101.txt", "r")
+from ..functions import run_solution
 
+input_filename = "./inputs/202101.txt"
+expected_output = 1446
+
+
+def solution(input_lines):
     previous_measurement = 0
     current_measurement = 0
     depth_increases = 0
     line_count = 0
 
-    while True:
-        current_line = input_file.readline()
-
+    for current_line in input_lines:
         if len(current_line) == 0:
             print(
                 f"The total number of times a depth measurement increased was: {depth_increases}"
@@ -28,7 +30,8 @@ def main():
             print(f"The current # of Depth increases is: {depth_increases}")
             previous_measurement = current_measurement
 
-    input_file.close()
+    return depth_increases
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

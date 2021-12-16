@@ -1,6 +1,10 @@
-def main():
+from ..functions import run_solution
 
-    input_file = open("./inputs/202102.txt", "r")
+input_filename = "./inputs/202102.txt"
+expected_output = 1857958050
+
+
+def solution(input_lines):
 
     current_line_contents = []
 
@@ -10,7 +14,7 @@ def main():
     aim = 0
     depth = 0
 
-    for line in input_file:
+    for line in input_lines:
 
         current_line += 1
 
@@ -32,9 +36,12 @@ def main():
     final_horizontal_position = sum(list_of_forward_directional_inputs)
     answer = final_horizontal_position * depth
 
-    print(f"The final horizontial position is: {final_horizontal_position}")
+    print(f"The final horizontal position is: {final_horizontal_position}")
     print(f"The final depth is: {depth}")
     print(f"The answer to the problem is: {answer}")
 
+    return answer
 
-main()
+
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)
