@@ -1,13 +1,14 @@
-from functions import read_lines
+from ..functions import run_solution
+
+input_filename = "./inputs/201801.txt"
+expected_output = 510
 
 
-def main():
+def solution(input_lines):
 
     frequency = 0
 
-    input = read_lines("./inputs/201801.txt")
-
-    for line in input:
+    for line in input_lines:
 
         if line[0] == "+":
             modifier_is_positive = True
@@ -22,6 +23,7 @@ def main():
             frequency -= int(line_value)
 
     print(frequency)
+    return frequency
 
 
 if __name__ == "__main__":

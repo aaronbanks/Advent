@@ -1,13 +1,14 @@
-from ..functions import read_lines
+from ..functions import run_solution
+
+input_filename = "./inputs/201603.txt"
+expected_output = 982
 
 
-def main():
+def solution(input_lines):
 
     valid_triangle_counter = 0
 
-    input = read_lines("./inputs/201603.txt")
-
-    for triangle in input:
+    for triangle in input_lines:
 
         sides = side_distances(triangle)
 
@@ -15,6 +16,7 @@ def main():
             valid_triangle_counter += 1
 
     print(valid_triangle_counter)
+    return valid_triangle_counter
 
 
 def valid_triangle_calculator(one, two, three):

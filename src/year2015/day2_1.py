@@ -1,10 +1,15 @@
-def main():
-    input_file = open("./inputs/201502.txt", "r")
+from ..functions import run_solution
+
+input_filename = "./inputs/201502.txt"
+expected_output = 1606483
+
+
+def solution(input_lines):
 
     total_area_required = 0
     current_line = 0
 
-    for line in input_file:
+    for line in input_lines:
         current_line += 1
 
         current_line_contents = (line.strip()).split("x", 3)
@@ -29,7 +34,7 @@ def main():
         )
 
     print(f"The total paper required to wrap all the gifts is: {total_area_required}")
-    input_file.close()
+    return total_area_required
 
 
 if __name__ == "__main__":

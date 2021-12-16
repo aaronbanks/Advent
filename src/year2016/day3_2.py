@@ -1,11 +1,12 @@
-from ..functions import read_lines
+from ..functions import run_solution
+
+input_filename = "./inputs/201603.txt"
+expected_output = None
 
 
-def main():
+def solution(input_lines):
 
     valid_triangle_counter = 0
-
-    input = read_lines("./inputs/201603.txt")
 
     list_of_triangles = []
 
@@ -15,7 +16,7 @@ def main():
 
     tri_completion_counter = 0
 
-    for line in input:
+    for line in input_lines:
         if tri_completion_counter >= 3:
 
             tri_completion_counter = 0
@@ -51,6 +52,7 @@ def main():
             valid_triangle_counter += 1
 
     print(valid_triangle_counter)
+    return valid_triangle_counter
 
 
 def valid_triangle_calculator(one, two, three):

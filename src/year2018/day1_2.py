@@ -1,16 +1,17 @@
-from ..functions import read_lines
+from ..functions import run_solution
+
+input_filename = "./inputs/201801.txt"
+expected_output = 69074
 
 
-def main():
+def solution(input_lines):
 
     frequency = 0
     set_of_frequencies = {0}
     first_double = 0
 
-    input = read_lines("./inputs/201801.txt")
-
     while True:
-        for line in input:
+        for line in input_lines:
 
             if line[0] == "+":
                 modifier_is_positive = True
@@ -34,6 +35,7 @@ def main():
             break
 
     print(first_double)
+    return first_double
 
 
 if __name__ == "__main__":

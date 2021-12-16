@@ -1,5 +1,12 @@
-def main():
-    input_file = open("./inputs/201501.txt", "r")
+from io import StringIO
+from ..functions import run_solution
+
+input_filename = "./inputs/201501.txt"
+expected_output = 1795
+
+
+def solution(input_lines):
+    fake_input_file = StringIO("\n".join(input_lines))
 
     floor = 0
 
@@ -8,7 +15,7 @@ def main():
     character_position = 0
 
     while EOF == False:
-        current_character = input_file.read(1)
+        current_character = fake_input_file.read(1)
         character_position += 1
 
         print(f"The current character position is: {character_position}")
@@ -30,7 +37,7 @@ def main():
             break
 
     # Below is an alternate way to write this.
-    # for line in input_file:
+    # for line in fake_input_file:
     #     for character in line:
     #         if character == '(':
     #             floor += 1
@@ -39,7 +46,7 @@ def main():
     #         else:
     #             pass
 
-    input_file.close()
+    return character_position
 
 
 if __name__ == "__main__":

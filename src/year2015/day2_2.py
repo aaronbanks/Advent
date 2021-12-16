@@ -1,11 +1,15 @@
-def main():
-    input_file = open("./inputs/201502.txt", "r")
+from ..functions import run_solution
 
+input_filename = "./inputs/201502.txt"
+expected_output = 3842356
+
+
+def solution(input_lines):
     current_line = 0
 
     total_ribbon_needed = 0
 
-    for line in input_file:
+    for line in input_lines:
         current_line += 1
 
         current_line_contents = (line.strip()).split("x", 3)
@@ -26,8 +30,7 @@ def main():
         total_ribbon_needed += ribbon_for_bow + ribbon_for_wrap
 
     print(f"Total ribbon needed is: {total_ribbon_needed}")
-
-    input_file.close()
+    return total_ribbon_needed
 
 
 if __name__ == "__main__":

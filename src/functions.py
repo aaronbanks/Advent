@@ -26,7 +26,8 @@ def run_solution(solution_function, input_filename, expected=None):
 
 
 def assert_solution_module_expected_output(solution_module):
-    if solution_module.expected_output is None:
+    # Ignore modules that don't declare an expected output.
+    if getattr(solution_module, "expected_output") is None:
         return
 
     input_lines = read_lines(solution_module.input_filename)

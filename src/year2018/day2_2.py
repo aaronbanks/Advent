@@ -1,12 +1,13 @@
-from ..functions import read_lines
+from ..functions import run_solution
+
+input_filename = "./inputs/201802.txt"
+expected_output = ...
 
 
-def main():
-
-    input = read_lines("./inputs/201802.txt")
+def solution(input_lines):
 
     shared_characters = ""
-    for line in input:
+    for line in input_lines:
 
         box_pair_found = False
 
@@ -43,6 +44,8 @@ def main():
         if box_pair_found == True:
             break
 
+    return shared_characters
+
 
 if __name__ == "__main__":
-    main()
+    run_solution(solution, input_filename, expected_solution)

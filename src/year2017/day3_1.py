@@ -1,4 +1,4 @@
-def main():
+def solution(input_lines):
 
     # input = int(input("What is the input for this puzzle?""))
     input = 347991
@@ -7,4 +7,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run_solution(solution, input_filename, expected_solution)

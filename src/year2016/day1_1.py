@@ -1,4 +1,10 @@
-def main():
+from ..functions import run_solution
+
+input_filename = "./inputs/201601.txt"
+expected_output = 209
+
+
+def solution(input_lines):
 
     current_compass_direction = "N"
     list_of_compass_directions = ("N", "E", "S", "W")
@@ -43,6 +49,7 @@ def main():
 
     distance_to_destination = abs(vertical_position) + abs(horizontal_position)
     print(f"The shortest path to the destination is {distance_to_destination} blocks")
+    return distance_to_destination
 
 
 if __name__ == "__main__":

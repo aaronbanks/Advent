@@ -1,12 +1,19 @@
-def main():
-    input_file = open("./inputs/201501.txt", "r")
+from io import StringIO
+from ..functions import run_solution
+
+input_filename = "./inputs/201501.txt"
+expected_output = 74
+
+
+def solution(input_lines):
+    fake_input_file = StringIO("\n".join(input_lines))
 
     floor = 0
 
     EOF = False
 
     while EOF == False:
-        current_character = input_file.read(1)
+        current_character = fake_input_file.read(1)
 
         if current_character == "(":
             floor += 1
@@ -18,7 +25,7 @@ def main():
             pass
 
     # Below is an alternate way to write this.
-    # for line in input_file:
+    # for line in fake_input_file:
     #     for character in line:
     #         if character == '(':
     #             floor += 1
@@ -29,7 +36,7 @@ def main():
 
     print(f"The instructions take santa to floor: {floor}")
 
-    input_file.close()
+    return floor
 
 
 if __name__ == "__main__":

@@ -1,15 +1,16 @@
-from ..functions import read_lines
+from ..functions import run_solution
+
+input_filename = "./inputs/201802.txt"
+expected_output = 5434
 
 
-def main():
+def solution(input_lines):
 
     checksum = 0
     boxes_with_two_of_same = 0
     boxes_with_three_of_same = 0
 
-    input = read_lines("./inputs/201802.txt")
-
-    for line in input:
+    for line in input_lines:
 
         set_of_characters_counted = set()
 
