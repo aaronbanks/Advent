@@ -36,4 +36,5 @@ def main():
         print(f"The total number of houses visited is: {total_number_of_houses}")
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

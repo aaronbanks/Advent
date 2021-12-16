@@ -34,6 +34,8 @@ def main():
 
     checksum = boxes_with_two_of_same * boxes_with_three_of_same
     print(checksum)
+    return checksum
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

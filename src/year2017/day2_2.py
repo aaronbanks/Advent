@@ -1,13 +1,14 @@
-from ..functions import read_lines
+from ..functions import run_solution
+
+input_filename = "./inputs/201702.txt"
+expected_output = 303
 
 
-def main():
-
-    input = read_lines("./inputs/201702.txt")
+def solution(input_lines):
 
     checksum = 0
 
-    for line in input:
+    for line in input_lines:
 
         current_line_as_strs = line.strip().split("\t")
         current_line_as_ints = list(map(int, current_line_as_strs))
@@ -30,7 +31,10 @@ def main():
             if line_solved == True:
                 break
 
-    print(int(checksum))
+    result = int(checksum)
+    print(result)
+    return result
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

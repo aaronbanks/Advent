@@ -35,4 +35,5 @@ def side_distances(triangle):
     return triangle_values
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

@@ -60,4 +60,5 @@ def valid_triangle_calculator(one, two, three):
         return False
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

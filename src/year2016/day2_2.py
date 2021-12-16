@@ -59,4 +59,5 @@ def main():
         print(f"The bathroom code is: {bathroom_code}")
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

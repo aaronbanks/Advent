@@ -36,4 +36,5 @@ def main():
     print(first_double)
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

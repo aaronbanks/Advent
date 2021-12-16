@@ -4,3 +4,7 @@ def main():
     input = 347991
 
     # you used a grid system in 2016.2.2 that may have some crossover here
+
+
+if __name__ == "__main__":
+    main()

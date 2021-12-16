@@ -45,4 +45,5 @@ def main():
     print(f"The shortest path to the destination is {distance_to_destination} blocks")
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)
