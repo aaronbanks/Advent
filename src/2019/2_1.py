@@ -1,5 +1,6 @@
 from ..functions import read_lines
 
+
 def main():
 
     input = read_lines("./inputs/201902.txt")
@@ -21,10 +22,16 @@ def main():
         opcode = intcode[location_counter]
 
         if opcode == 1:
-            intcode[intcode[location_counter + 3]] = intcode[intcode[location_counter + 1]] + intcode[intcode[location_counter + 2]]
+            intcode[intcode[location_counter + 3]] = (
+                intcode[intcode[location_counter + 1]]
+                + intcode[intcode[location_counter + 2]]
+            )
 
         elif opcode == 2:
-            intcode[intcode[location_counter + 3]] = intcode[intcode[location_counter + 1]] * intcode[intcode[location_counter + 2]]
+            intcode[intcode[location_counter + 3]] = (
+                intcode[intcode[location_counter + 1]]
+                * intcode[intcode[location_counter + 2]]
+            )
 
         elif opcode == 99:
             break
@@ -36,5 +43,6 @@ def main():
         location_counter += 4
 
     print(f"Ending intcode: {intcode}")
+
 
 main()
