@@ -1,4 +1,4 @@
-__package__ = "src.year2020"
+__package__ = "src.year2019"
 
 from ..functions import assert_solution_module_expected_output
 
@@ -10,7 +10,7 @@ from . import (
 )
 
 
-def test_2020():
+def test_2019():
     for solution_module in (
         day1_1,
         day1_2,

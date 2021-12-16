@@ -1,12 +1,13 @@
-from ..functions import read_lines
+from ..functions import run_solution
 import copy
 
+input_filename = "./inputs/201902.txt"
+expected_output = 8444
 
-def main():
 
-    input = read_lines("./inputs/201902.txt")
+def solution(input_lines):
 
-    initial_memory_state = list(map(int, input[0].split(",")))
+    initial_memory_state = list(map(int, input_lines[0].split(",")))
 
     noun = 0
     verb = 0
@@ -66,6 +67,8 @@ def main():
 
     answer = 100 * noun + verb
     print(answer)
+    return answer
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

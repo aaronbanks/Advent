@@ -1,14 +1,15 @@
-from ..functions import read_lines
+from ..functions import run_solution
+
+input_filename = "./inputs/201902.txt"
+expected_output = 3101878
 
 
-def main():
+def solution(input_lines):
 
-    input = read_lines("./inputs/201902.txt")
+    intcode = list(map(int, input_lines[0].split(",")))
 
-    intcode = list(map(int, input[0].split(",")))
-
-    # intcode[1] = 12
-    # intcode[2] = 2
+    intcode[1] = 12
+    intcode[2] = 2
 
     print(f"Starting intcode: {intcode}")
 
@@ -37,12 +38,15 @@ def main():
             break
 
         else:
-            print("opcode alingment error")
+            print("opcode alignment error")
 
         print(f"On loop #{loop_counter} the updated intcode is: {intcode}")
         location_counter += 4
 
     print(f"Ending intcode: {intcode}")
 
+    return intcode[0]
 
-main()
+
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)
