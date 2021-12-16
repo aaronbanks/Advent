@@ -1,0 +1,23 @@
+name: Python
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  Python:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone repository with git
+      uses: actions/checkout@v2
+
+    - name: Install Python 3
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+        cache: pip
+
+    - name: Install dependencies with pip
+      run: pip install -r requirements.txt
+
+    - name: Run tests with pytest
+      run: pytest --suppress-no-test-exit-code
+
+    - name: Check formatting with black
+      run: black --check --diff --color
