@@ -23,3 +23,14 @@ def run_solution(solution_function, input_filename, expected=None):
             print(f"{result!r} (matches expected value)")
         else:
             print(f"{result!r} (does not match expected value {expected!r})")
+
+
+def assert_solution_module_expected_output(solution_module):
+    if solution_module.expected_output is None:
+        return
+
+    input_lines = read_lines(solution_module.input_filename)
+    output = solution_module.solution(input_lines)
+    assert (
+        output == solution_module.expected_output
+    ), f"{solution_module.__name__}: actual output ({output!r}) did not match expected output ({solution_module.expected_output!r})."
