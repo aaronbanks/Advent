@@ -1,5 +1,6 @@
 from ..functions import read_lines
 
+
 def main():
 
     input = list(map(int, read_lines("./inputs/202001.txt")))
@@ -31,5 +32,6 @@ def main():
                 break
 
     print(value_1 * value_2 * value_3)
+
 
 main()

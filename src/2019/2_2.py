@@ -1,6 +1,7 @@
 from ..functions import read_lines
 import copy
 
+
 def main():
 
     input = read_lines("./inputs/201902.txt")
@@ -37,10 +38,14 @@ def main():
                 perameter_pointer_3 = intcode[location_counter + 3]
 
                 if opcode == 1:
-                    intcode[perameter_pointer_3] = intcode[perameter_pointer_1] + intcode[perameter_pointer_2]
+                    intcode[perameter_pointer_3] = (
+                        intcode[perameter_pointer_1] + intcode[perameter_pointer_2]
+                    )
 
                 elif opcode == 2:
-                    intcode[perameter_pointer_3] = intcode[perameter_pointer_1] * intcode[perameter_pointer_2]
+                    intcode[perameter_pointer_3] = (
+                        intcode[perameter_pointer_1] * intcode[perameter_pointer_2]
+                    )
 
                 elif opcode == 99:
                     break
@@ -61,5 +66,6 @@ def main():
 
     answer = 100 * noun + verb
     print(answer)
+
 
 main()
