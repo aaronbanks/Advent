@@ -9,13 +9,12 @@ def main():
 
     for triangle in input:
 
-        sides = side_distances_sorted(triangle)
+        sides = side_distances(triangle)
 
         if valid_triangle_calculator(sides[0], sides[1], sides[2]) == True:
             valid_triangle_counter += 1
 
     print(valid_triangle_counter)
-
 
 def valid_triangle_calculator(one, two, three):
     if one + two > three and one + three > two and three + two > one:
@@ -24,7 +23,7 @@ def valid_triangle_calculator(one, two, three):
         return False
 
 
-def side_distances_sorted(triangle):
+def side_distances(triangle):
     triangle_values = []
 
     line_contents = triangle.split()
@@ -33,6 +32,5 @@ def side_distances_sorted(triangle):
         triangle_values.append(int(side))
 
     return triangle_values
-
 
 main()
