@@ -1,3 +1,8 @@
+from ..functions import run_solution
+
+input_filename = "./inputs/202101.txt"
+expected_output = 1486
+
 window_1 = [0, 0, 0]
 window_2 = [0, 0, 0]
 window_3 = [0, 0, 0]
@@ -5,12 +10,12 @@ window_4 = [0, 0, 0]
 window_5 = [0, 0, 0]
 window_6 = [0, 0, 0]
 
-number_of_sum_increaes = 0
+number_of_sum_increases = 0
 window_cycle_position = 0
 current_completed_window = 1
 
 
-def main():
+def solution(input_lines):
     global window_1
     global window_2
     global window_3
@@ -18,15 +23,13 @@ def main():
     global window_5
     global window_6
 
-    global number_of_sum_increaes
+    global number_of_sum_increases
     global window_cycle_position
     global current_completed_window
 
-    initiate_window_compairision = 0
+    initiate_window_comparison = 0
 
-    input_file = open("./inputs/202101.txt", "r")
-
-    for line in input_file:
+    for line in input_lines:
         window_cycle_position += 1
         if window_cycle_position > 12:
             window_cycle_position = 1
@@ -36,31 +39,29 @@ def main():
 
         add_value_to_windows(current_line_value)
 
-        initiate_window_compairision += 1
-        if initiate_window_compairision > 5:
+        initiate_window_comparison += 1
+        if initiate_window_comparison > 5:
             current_completed_window += 1
 
             if current_completed_window > 6:
                 current_completed_window = 1
 
-            window_compairison()
+            window_comparison()
         else:
             pass
 
-    input_file.close()
+    current_completed_window = current_completed_window + 1
+    if current_completed_window > 6:
+        current_completed_window = 1
+    window_comparison()
 
     current_completed_window = current_completed_window + 1
     if current_completed_window > 6:
         current_completed_window = 1
-    window_compairison()
-
-    current_completed_window = current_completed_window + 1
-    if current_completed_window > 6:
-        current_completed_window = 1
-    window_compairison()
+    window_comparison()
 
     print(
-        f"The total number of sums which were larger than the previous sum was: {number_of_sum_increaes}"
+        f"The total number of sums which were larger than the previous sum was: {number_of_sum_increases}"
     )
 
     print(f"window 1 is now: {window_1}")
@@ -72,6 +73,8 @@ def main():
 
     print(f"window_cycle_position is now {window_cycle_position}")
     print(f"current_completed_window is now {current_completed_window}")
+
+    return number_of_sum_increases
 
 
 def add_value_to_windows(current_line_value):
@@ -145,7 +148,7 @@ def add_value_to_windows(current_line_value):
         window_6[0] = current_line_value
 
 
-def window_compairison():
+def window_comparison():
     global window_1
     global window_2
     global window_3
@@ -153,7 +156,7 @@ def window_compairison():
     global window_5
     global window_6
 
-    global number_of_sum_increaes
+    global number_of_sum_increases
     global current_completed_window
 
     if current_completed_window == 1:
@@ -164,9 +167,9 @@ def window_compairison():
             f"The previous window total was: {sum(window_6)} and the current window total is: {sum(window_1)}"
         )
         if sum(window_1) > sum(window_6):
-            number_of_sum_increaes += 1
+            number_of_sum_increases += 1
             print(
-                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increaes}"
+                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increases}"
             )
         else:
             pass
@@ -179,9 +182,9 @@ def window_compairison():
             f"The previous window total was: {sum(window_1)} and the current window total is: {sum(window_2)}"
         )
         if sum(window_2) > sum(window_1):
-            number_of_sum_increaes += 1
+            number_of_sum_increases += 1
             print(
-                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increaes}"
+                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increases}"
             )
         else:
             pass
@@ -194,9 +197,9 @@ def window_compairison():
             f"The previous window total was: {sum(window_2)} and the current window total is: {sum(window_3)}"
         )
         if sum(window_3) > sum(window_2):
-            number_of_sum_increaes += 1
+            number_of_sum_increases += 1
             print(
-                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increaes}"
+                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increases}"
             )
         else:
             pass
@@ -209,9 +212,9 @@ def window_compairison():
             f"The previous window total was: {sum(window_3)} and the current window total is: {sum(window_4)}"
         )
         if sum(window_4) > sum(window_3):
-            number_of_sum_increaes += 1
+            number_of_sum_increases += 1
             print(
-                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increaes}"
+                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increases}"
             )
         else:
             pass
@@ -224,9 +227,9 @@ def window_compairison():
             f"The previous window total was: {sum(window_4)} and the current window total is: {sum(window_5)}"
         )
         if sum(window_5) > sum(window_4):
-            number_of_sum_increaes += 1
+            number_of_sum_increases += 1
             print(
-                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increaes}"
+                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increases}"
             )
         else:
             pass
@@ -239,12 +242,13 @@ def window_compairison():
             f"The previous window total was: {sum(window_5)} and the current window total is: {sum(window_6)}"
         )
         if sum(window_6) > sum(window_5):
-            number_of_sum_increaes += 1
+            number_of_sum_increases += 1
             print(
-                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increaes}"
+                f"Since the current window total is higher, the total number of sum increases has gone up to {number_of_sum_increases}"
             )
         else:
             pass
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

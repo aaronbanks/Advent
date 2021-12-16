@@ -1,6 +1,10 @@
-def main():
+from ..functions import run_solution
 
-    input_file = open("./inputs/202103.txt", "r")
+input_filename = "./inputs/202103.txt"
+expected_output = None
+
+
+def solution(input_lines):
 
     current_line = 0
     length_of_lines = 0
@@ -8,7 +12,7 @@ def main():
     nested_list_storing_all_input_digits = []
 
     # This loop goes through each line of the file and stores it's values in a list of list
-    for line in input_file:
+    for line in input_lines:
 
         current_line += 1
 
@@ -99,4 +103,5 @@ def main():
     print(f"The C02 scrubber ratting in binary is: {calculate_c02_rating}")
 
 
-main()
+if __name__ == "__main__":
+    run_solution(solution, input_filename, expected_solution)

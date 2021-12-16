@@ -52,10 +52,12 @@ def main():
 
     print(valid_triangle_counter)
 
+
 def valid_triangle_calculator(one, two, three):
     if one + two > three and one + three > two and three + two > one:
         return True
     else:
         return False
+
 
 main()
