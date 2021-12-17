@@ -22,7 +22,10 @@ def main():
 
 def location_calculator(current_perimeter_level, previous_perimeter_end, input_value):
 
-    perimeter_start_location = [current_perimeter_level, (current_perimeter_level * -1) + 1]
+    perimeter_start_location = [
+        current_perimeter_level,
+        (current_perimeter_level * -1) + 1,
+    ]
     print(perimeter_start_location)
 
     difference = input_value - (previous_perimeter_end + 1)
