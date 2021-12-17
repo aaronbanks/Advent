@@ -20,4 +20,4 @@ jobs:
       run: pytest --suppress-no-test-exit-code
 
     - name: Check formatting with black
-      run: black --check --diff --color
+      run: black --check --diff --color .
