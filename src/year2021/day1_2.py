@@ -251,4 +251,4 @@ def window_comparison():
 
 
 if __name__ == "__main__":
-    run_solution(solution, input_filename, expected_solution)
+    run_solution(solution, input_filename, expected_output)
