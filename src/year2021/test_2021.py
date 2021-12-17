@@ -9,6 +9,7 @@ from . import (
     day2_2,
     day3_1,
     day3_2,
+    day4_1,
 )
 
 
@@ -20,5 +21,6 @@ def test_2021():
         day2_2,
         day3_1,
         day3_2,
+        day4_1,
     ):
         assert_solution_module_expected_output(solution_module)

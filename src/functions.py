@@ -1,8 +1,12 @@
 def read_lines(file_name):
+    """Reads all of the lines from a text file into an list of strings.
+
+    Leading and trailing whitespace is stripped.
+    """
 
     return_list = []
 
-    with open(file_name, "r") as input:
+    with open(file_name, "rt") as input:
 
         for line in input:
             return_list.append(line.strip())
@@ -26,6 +30,11 @@ def run_solution(solution_function, input_filename, expected=None):
 
 
 def assert_solution_module_expected_output(solution_module):
+    """Asserts that a given solution module produces its expected output.
+
+    Has no effect unless the module exports a non-None .expected_output property.
+    """
+
     if getattr(solution_module, "expected_output", None) is None:
         print(
             f"Ignoring {solution_module.__name__} as it doesn't export any .expected_output property."

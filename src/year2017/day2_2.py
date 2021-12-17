@@ -33,8 +33,9 @@ def solution(input_lines):
 
     result = int(checksum)
     print(result)
+
     return result
 
 
 if __name__ == "__main__":
-    run_solution(solution, input_filename, expected_solution)
+    run_solution(solution, input_filename, expected_output)
