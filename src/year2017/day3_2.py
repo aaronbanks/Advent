@@ -1,6 +1,6 @@
 def main():
-    #input = 347991
     input = 805
+    #input = 347991
 
     grid_positions_values = {"0X0": 1}
 
@@ -26,7 +26,15 @@ def main():
         print(f"position: {position_counter}")
 
 #1# CALCULATE_CURRENT_POSITION_VALUE BASED ON SURROUNDING COORDINATES
-        #if current_grid_position has_key():
+        # for dx in [-1, 0, +1]:
+        #   for dy in [-1, 0, +1]:
+        #     if dx == 0 and dy == 0:
+        #       continue
+        #    // do something with x + dx and y + dy
+
+        #don't need to convert to string, just use a tuple as key
+        #.get(key, default)
+        print(f"current_x_coordinate: {current_x_coordinate}\ncurrent_y_coordinate: {current_y_coordinate}")
         print("Values added to current position value:")
 
         try:
@@ -79,25 +87,25 @@ def main():
             pass
 
         try:
-            temp_str_grid_position = str(current_x_coordinate) + "X" + str(current_y_coordinate + 1)
+            temp_str_grid_position = str(current_x_coordinate) + "X" + str(current_y_coordinate - 1)
             current_position_value += grid_positions_values[temp_str_grid_position]
             print(f"grid_position: {temp_str_grid_position}, {grid_positions_values[temp_str_grid_position]}")
         except KeyError:
             pass
 
-        print(f"")
-        print(f"current_position_value: {current_position_value}")
-
 #2# CREATE NEW LOCATION IN GRID POSITION AND ASSIGN VALUE TO GRID POSITION
         str_grid_position = str(current_x_coordinate) + "X" + str(current_y_coordinate)
         grid_positions_values[str_grid_position] = current_position_value
 
-#4# THIS IS THE CONDITION FOR ANSWERING THIS QUESTION
+        print(f"grid_positions_values: {grid_positions_values}")
+        print(f"current_position_value: {current_position_value}")
+
+#3# THIS IS THE CONDITION FOR ANSWERING THIS QUESTION
         if current_position_value > input:
             first_value_larger_than_input = current_position_value
             break
 
-#3# MOVE TO THE NEXT POSITION IN THE SPIRAL
+#4# MOVE TO THE NEXT POSITION IN THE SPIRAL
         if position_counter >= current_perimeter_size + previous_perimeter_end:
             if first_iteration == True:
                 previous_perimeter_end = 1
