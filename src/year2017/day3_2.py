@@ -9,76 +9,83 @@ def main():
 
     current_perimeter_size = 0
 
-    position_counter = 0
+    position_counter = 1
 
-    current_grid_position = [1, 0]
+    current_x_coordinate = 1
+    current_y_coordinate = 0
 
     first_value_larger_than_input = 0
+
+    first_iteration = True
 
     while True:
         current_position_value = 0
 
-        current_x_coordinate = current_grid_position[0]
-        current_y_coordinate = current_grid_position[1]
-
         position_counter += 1
 
-        if position_counter == 1:
-            position_counter += 1
         print(f"position: {position_counter}")
-
 
 #1# CALCULATE_CURRENT_POSITION_VALUE BASED ON SURROUNDING COORDINATES
         #if current_grid_position has_key():
+        print("Values added to current position value:")
 
         try:
             temp_str_grid_position = str(current_x_coordinate - 1) + "X" + str(current_y_coordinate)
             current_position_value += grid_positions_values[temp_str_grid_position]
+            print(f"grid_position: {temp_str_grid_position}, {grid_positions_values[temp_str_grid_position]}")
         except KeyError:
             pass
 
         try:
             temp_str_grid_position = str(current_x_coordinate - 1) + "X" + str(current_y_coordinate + 1)
             current_position_value += grid_positions_values[temp_str_grid_position]
+            print(f"grid_position: {temp_str_grid_position}, {grid_positions_values[temp_str_grid_position]}")
         except KeyError:
             pass
 
         try:
             temp_str_grid_position = str(current_x_coordinate - 1) + "X" + str(current_y_coordinate - 1)
             current_position_value += grid_positions_values[temp_str_grid_position]
+            print(f"grid_position: {temp_str_grid_position}, {grid_positions_values[temp_str_grid_position]}")
         except KeyError:
             pass
 
         try:
             temp_str_grid_position = str(current_x_coordinate + 1) + "X" + str(current_y_coordinate)
             current_position_value += grid_positions_values[temp_str_grid_position]
+            print(f"grid_position: {temp_str_grid_position}, {grid_positions_values[temp_str_grid_position]}")
         except KeyError:
             pass
 
         try:
             temp_str_grid_position = str(current_x_coordinate + 1) + "X" + str(current_y_coordinate + 1)
             current_position_value += grid_positions_values[temp_str_grid_position]
+            print(f"grid_position: {temp_str_grid_position}, {grid_positions_values[temp_str_grid_position]}")
         except KeyError:
             pass
 
         try:
             temp_str_grid_position = str(current_x_coordinate + 1) + "X" + str(current_y_coordinate - 1)
             current_position_value += grid_positions_values[temp_str_grid_position]
+            print(f"grid_position: {temp_str_grid_position}, {grid_positions_values[temp_str_grid_position]}")
         except KeyError:
             pass
 
         try:
             temp_str_grid_position = str(current_x_coordinate) + "X" + str(current_y_coordinate + 1)
             current_position_value += grid_positions_values[temp_str_grid_position]
+            print(f"grid_position: {temp_str_grid_position}, {grid_positions_values[temp_str_grid_position]}")
         except KeyError:
             pass
 
         try:
             temp_str_grid_position = str(current_x_coordinate) + "X" + str(current_y_coordinate + 1)
             current_position_value += grid_positions_values[temp_str_grid_position]
+            print(f"grid_position: {temp_str_grid_position}, {grid_positions_values[temp_str_grid_position]}")
         except KeyError:
             pass
 
+        print(f"")
         print(f"current_position_value: {current_position_value}")
 
 #2# CREATE NEW LOCATION IN GRID POSITION AND ASSIGN VALUE TO GRID POSITION
@@ -92,7 +99,10 @@ def main():
 
 #3# MOVE TO THE NEXT POSITION IN THE SPIRAL
         if position_counter >= current_perimeter_size + previous_perimeter_end:
-            previous_perimeter_end = position_counter
+            if first_iteration == True:
+                previous_perimeter_end = 1
+            else:
+                previous_perimeter_end = position_counter
             current_perimeter_level += 1
             current_perimeter_size += 8
             perimeter_move_counter = 0
@@ -101,18 +111,20 @@ def main():
         distance_across_sides = current_perimeter_level * 2
 
         if perimeter_move_counter < distance_to_top:
-            current_grid_position[1] += 1
+            current_y_coordinate += 1
 
         elif perimeter_move_counter < distance_to_top + distance_across_sides:
-            current_grid_position[0] -= 1
+            current_x_coordinate -= 1
 
         elif perimeter_move_counter < distance_to_top + distance_across_sides * 2:
-            current_grid_position[1] -= 1
+            current_y_coordinate -= 1
 
         else:
-            current_grid_position[0] += 1
+            current_x_coordinate += 1
 
         perimeter_move_counter += 1
+
+        first_iteration = False
 
 #5# PRINT SOLUTION
     print(f"first_value_larger_than_input: {first_value_larger_than_input}")
