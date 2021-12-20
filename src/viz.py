@@ -13,23 +13,8 @@ from PIL import Image, ImageTk, ImageDraw
 MAX_SIZE = 720
 MIN_SIZE = 180
 
-LINE_PEN = dict(
-    fill=(0xFF, 0xFF, 0xFF),
-    width=4,
-)
 
-ARROW_PEN = dict(
-    fill=(0x80, 0xC0, 0xFF),
-    width=1,
-)
-
-DOT_PEN = dict(
-    fill=(0xFF, 0x00, 0x00),
-)
-
-DOT_RADIUS = 10
-
-JITTER = 0.10
+JITTER = 0
 
 
 @dataclass(frozen=True)
@@ -164,7 +149,7 @@ class Visualization:
         )
 
     def render(self):
-        bounds = self.bounds().padded(4)
+        bounds = self.bounds().padded(2)
         bounds_width = bounds.max.x - bounds.min.x
         bounds_height = bounds.max.y - bounds.min.y
 
@@ -186,29 +171,63 @@ class Visualization:
             color=(0x00, 0x00, 0x00, 0xFF),
         )
 
-        draw = ImageDraw.Draw(image)
+        def alpha_draw(f):
+            buffer = Image.new(
+                mode="RGBA",
+                size=image.size,
+                color=(0x00, 0x00, 0x00, 0x00),
+            )
+
+            buffer_draw = ImageDraw.Draw(buffer)
+
+            f(buffer_draw)
+
+            image.alpha_composite(buffer)
+
+        dot_radius = 10
 
         for graphic in self.graphics:
             if isinstance(graphic, PathGraphic):
-                draw.line(
-                    [as_tuple(to_pixel_space(point)) for point in graphic.points()],
-                    **LINE_PEN,
+                alpha_draw(
+                    lambda draw: draw.line(
+                        [as_tuple(to_pixel_space(point)) for point in graphic.points()],
+                        fill=(0xFF, 0xFF, 0xFF, 0xE0),
+                        width=4,
+                        joint="curve",
+                    )
                 )
             elif isinstance(graphic, ArrowGraphic):
-                draw.line(
-                    [as_tuple(to_pixel_space(point)) for point in graphic.points()],
-                    **ARROW_PEN,
-                )
+
+                @alpha_draw
+                def _(draw):
+                    for (dx, dy) in (
+                        (-0.125, 0),
+                        (+0.125, 0),
+                        (0, 0.125),
+                        (0, -0.125),
+                        (0, 0),
+                    ):
+                        t = Transformation(1, 1, dx, dy)
+                        source = as_tuple(to_pixel_space(t(graphic.source)))
+                        target = as_tuple(to_pixel_space(graphic.target))
+                        draw.line(
+                            [source, target],
+                            fill=(0x80, 0xD0, 0xFF, 0x40),
+                            width=2,
+                        )
+
             elif isinstance(graphic, DotGraphic):
                 center = to_pixel_space(graphic.center)
-                draw.ellipse(
-                    [
-                        center.x - DOT_RADIUS,
-                        center.y - DOT_RADIUS,
-                        center.x + DOT_RADIUS,
-                        center.y + DOT_RADIUS,
-                    ],
-                    **DOT_PEN,
+                alpha_draw(
+                    lambda draw: draw.ellipse(
+                        [
+                            center.x - dot_radius,
+                            center.y - dot_radius,
+                            center.x + dot_radius,
+                            center.y + dot_radius,
+                        ],
+                        fill=(0xFF, 0xD0, 0x00, 0x80),
+                    )
                 )
             else:
                 raise TypeError(f"expected a *Graphic, but got this: {graphic!r}")
