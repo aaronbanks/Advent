@@ -3,7 +3,7 @@ from itertools import chain
 import tkinter as tk
 from tkinter import ttk
 
-from PIL import Image, ImageShow, ImageTk
+from PIL import Image, ImageTk
 import aggdraw
 
 
@@ -51,7 +51,7 @@ class Visualization:
             width=2,
         )
 
-        coords = list(chain(*self.coords))
+        coords = list(chain.from_iterable(self.coords))
         coords = [c * 20 + 200 for c in coords]
 
         draw.line(

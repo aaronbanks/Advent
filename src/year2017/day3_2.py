@@ -5,6 +5,7 @@ input_filename = "./inputs/201703.txt"
 expected_output = 349975
 viz = Visualization()
 
+
 def solution(input_lines):
     input = int(input_lines[0])
 
