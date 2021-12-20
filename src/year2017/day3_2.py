@@ -1,71 +1,34 @@
 def main():
     input = 347991
 
-    grid_positions = [[1]]
+    grid_positions_values = {(0, 0): 1}
 
-    previous_perimeter_end = 0
+    previous_perimeter_end = 1
     current_perimeter_level = 0
-
     current_perimeter_size = 0
 
-    counter = 0
+    position_counter = 1
 
-    current_grid_position = [1, 0]
-
-    first_value_larger_than_input = 0
+    current_x_coordinate = 1
+    current_y_coordinate = 0
 
     while True:
-        current_x_coordinate = current_grid_position[0]
-        current_y_coordinate = current_grid_position[1]
+        position_counter += 1
 
-        current_position_value = 1
+#1# CALCULATE_CURRENT_POSITION's_VALUE BASED ON SURROUNDING COORDINATES
+        current_position_value = value_of_surrounding_coordinates(current_x_coordinate, current_y_coordinate, grid_positions_values)
 
-        try:
-                current_position_value += grid_positions[current_x_coordinate - 1][current_y_coordinate]
-        except IndexError:
-            pass
+#2# CREATE NEW LOCATION IN GRID POSITION AND ASSIGN VALUE TO GRID POSITION
+        grid_positions_values[(current_x_coordinate, current_y_coordinate)] = current_position_value
 
-        try:
-            current_position_value += grid_positions[current_x_coordinate - 1][current_y_coordinate + 1]
-        except IndexError:
-            pass
-
-        try:
-            current_position_value += grid_positions[current_x_coordinate - 1][current_y_coordinate - 1]
-        except IndexError:
-                pass
-
-        try:
-            current_position_value += grid_positions[current_x_coordinate + 1][current_y_coordinate]
-        except IndexError:
-                pass
-
-        try:
-            current_position_value += grid_positions[current_x_coordinate + 1][current_y_coordinate + 1]
-        except IndexError:
-                pass
-
-        try:
-            current_position_value += grid_positions[current_x_coordinate + 1][current_y_coordinate - 1]
-        except IndexError:
-                pass
-
-        try:
-            current_position_value += grid_positions[current_x_coordinate][current_y_coordinate + 1]
-        except IndexError:
-                pass
-
-        try:
-            current_position_value += grid_positions[current_x_coordinate][current_y_coordinate - 1]
-        except IndexError:
-                pass
-
+#3# THIS IS THE CONDITION FOR ANSWERING THIS QUESTION
         if current_position_value > input:
-            first_value_larger_than_input = current_position_value
+            print(f"First value larger than the input: {current_position_value}")
             break
 
-        if counter >= current_perimeter_size + previous_perimeter_end:
-            previous_perimeter_end = counter
+#4# MOVE TO THE NEXT POSITION IN THE SPIRAL
+        if position_counter > current_perimeter_size + previous_perimeter_end:
+            previous_perimeter_end = position_counter -1
             current_perimeter_level += 1
             current_perimeter_size += 8
             perimeter_move_counter = 0
@@ -74,25 +37,29 @@ def main():
         distance_across_sides = current_perimeter_level * 2
 
         if perimeter_move_counter < distance_to_top:
-            current_grid_position[1] += 1
+            current_y_coordinate += 1
 
         elif perimeter_move_counter < distance_to_top + distance_across_sides:
-            current_grid_position[0] -= 1
+            current_x_coordinate -= 1
 
         elif perimeter_move_counter < distance_to_top + distance_across_sides * 2:
-            current_grid_position[1] -= 1
+            current_y_coordinate -= 1
 
         else:
-            current_grid_position[0] += 1
+            current_x_coordinate += 1
 
         perimeter_move_counter += 1
-        counter += 1
-        print(current_position_value)
 
-        if counter > 50:
-            break
+def value_of_surrounding_coordinates(current_x_coordinate, current_y_coordinate, grid_positions_values):
+        value_counter = 0
 
-    print(first_value_larger_than_input)
+        for x_modifier in [-1, 0, +1]:
+          for y_modifier in [-1, 0, +1]:
+            if x_modifier == 0 and y_modifier == 0:
+              continue
+
+            value_counter += grid_positions_values.get((current_x_coordinate + x_modifier, current_y_coordinate + y_modifier), 0)
+        return value_counter
 
 if __name__ == "__main__":
     main()
