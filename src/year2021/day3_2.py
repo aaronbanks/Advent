@@ -11,7 +11,7 @@ def solution(input_lines):
     calculate_oxygen_rating = copy.deepcopy(nested_list_storing_all_input_digits)
     calculate_c02_rating = copy.deepcopy(nested_list_storing_all_input_digits)
 
-    # iterate through each digit, diritmine which lines should be deleted and then delete them.
+    # iterate through each digit, determine which lines should be deleted and then delete them.
     binary_oxygen_rating = determine_and_delete_digits_from_oxygen(calculate_oxygen_rating)
     binary_c02_rating  = determine_and_delete_digits_from_c02(calculate_c02_rating)
 
@@ -19,7 +19,7 @@ def solution(input_lines):
     decimal_c02_rating = convert_binary_number_to_decimal(binary_c02_rating)
 
     answer = decimal_oxygen_rating * decimal_c02_rating
-    print(f"answer: {answer}")
+    return answer
 
 def convert_binary_number_to_decimal(binary_number_to_convert):
     conversion_counter = 0
@@ -91,7 +91,7 @@ def determine_and_delete_digits_from_oxygen(calculate_oxygen_rating):
                 if n == 1:
                     positions_to_be_deleted_from_oxygen.append(counter)
 
-        # delete all the positions that you detirmined should be deleted
+        # delete all the positions that you determined should be deleted
         #reversing the order means you start from the highest number and don't need to adjust anything as you go
         for position in reversed(positions_to_be_deleted_from_oxygen):
             for b in calculate_oxygen_rating:
