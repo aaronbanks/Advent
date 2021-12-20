@@ -1,5 +1,5 @@
 from itertools import chain
-from dataclasses import dataclass
+from dataclasses import dataclass, astuple as as_tuple
 from abc import ABC, abstractmethod
 from random import random
 
@@ -20,14 +20,30 @@ LINE_PEN = dict(
 
 ARROW_PEN = dict(
     fill=(0x80, 0xC0, 0xFF),
-    width=2,
+    width=1,
 )
 
-DOT_PEN = dict(fill=(0xFF, 0x00, 0x00))
+DOT_PEN = dict(
+    fill=(0xFF, 0x00, 0x00),
+)
 
-DOT_RADIUS = 4
+DOT_RADIUS = 10
 
-JITTER = 0.05
+JITTER = 0.10
+
+
+@dataclass(frozen=True)
+class Transformation:
+    x_scale: float = 1.0
+    y_scale: float = 1.0
+    y_offset: float = 0.0
+    x_offset: float = 0.0
+
+    def __call__(self, point: "Point") -> "Point":
+        return Point(
+            point.x * self.x_scale + self.x_offset,
+            point.y * self.y_scale + self.y_offset,
+        )
 
 
 @dataclass(frozen=True)
@@ -120,7 +136,7 @@ class Visualization:
 
     def dot_at(self, x, y):
         """Draws a dot at the coordinates, without moving the pen."""
-        self.graphics.append(DotGraphic(Point(x, y)))
+        self.graphics.append(DotGraphic(Point(x, y).jitter()))
 
     def points(self) -> Iterable[Point]:
         for graphic in self.graphics:
@@ -148,20 +164,21 @@ class Visualization:
         )
 
     def render(self):
-        bounds = self.bounds().padded(5)
+        bounds = self.bounds().padded(4)
         bounds_width = bounds.max.x - bounds.min.x
         bounds_height = bounds.max.y - bounds.min.y
 
         if bounds_width > bounds_height:
-            inner_scale = MAX_SIZE / bounds_width
+            scale = MAX_SIZE / bounds_width
         else:
-            inner_scale = MAX_SIZE / bounds_height
+            scale = MAX_SIZE / bounds_height
 
-        inner_x_offset = -bounds.min.x
-        inner_y_offset = -bounds.min.y
+        to_pixel_space = Transformation(
+            scale, scale, -bounds.min.x * scale, -bounds.min.y * scale
+        )
 
-        outer_width = int(min(MAX_SIZE, max(MIN_SIZE, inner_scale * bounds_width)))
-        outer_height = int(min(MAX_SIZE, max(MIN_SIZE, inner_scale * bounds_height)))
+        outer_width = int(min(MAX_SIZE, max(MIN_SIZE, scale * bounds_width)))
+        outer_height = int(min(MAX_SIZE, max(MIN_SIZE, scale * bounds_height)))
 
         image = Image.new(
             mode="RGBA",
@@ -174,35 +191,22 @@ class Visualization:
         for graphic in self.graphics:
             if isinstance(graphic, PathGraphic):
                 draw.line(
-                    [
-                        c
-                        for point in graphic.points()
-                        for c in (
-                            inner_scale * (inner_x_offset + point.x),
-                            inner_scale * (inner_y_offset + point.y),
-                        )
-                    ],
+                    [as_tuple(to_pixel_space(point)) for point in graphic.points()],
                     **LINE_PEN,
                 )
             elif isinstance(graphic, ArrowGraphic):
                 draw.line(
-                    [
-                        c
-                        for point in graphic.points()
-                        for c in (
-                            inner_scale * (inner_x_offset + point.x),
-                            inner_scale * (inner_y_offset + point.y),
-                        )
-                    ],
+                    [as_tuple(to_pixel_space(point)) for point in graphic.points()],
                     **ARROW_PEN,
                 )
             elif isinstance(graphic, DotGraphic):
+                center = to_pixel_space(graphic.center)
                 draw.ellipse(
                     [
-                        graphic.center.x - DOT_RADIUS,
-                        graphic.center.y - DOT_RADIUS,
-                        graphic.center.x + DOT_RADIUS,
-                        graphic.center.y + DOT_RADIUS,
+                        center.x - DOT_RADIUS,
+                        center.y - DOT_RADIUS,
+                        center.x + DOT_RADIUS,
+                        center.y + DOT_RADIUS,
                     ],
                     **DOT_PEN,
                 )
