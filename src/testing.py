@@ -13,7 +13,9 @@ def main():
 
     print(grid_positions_values)
 
-    str_grid_position = str(current_x_coordinate - 1 + 1) + "X" + str(current_y_coordinate)
+    str_grid_position = (
+        str(current_x_coordinate - 1 + 1) + "X" + str(current_y_coordinate)
+    )
     test = grid_positions_values[str_grid_position]
 
     print(test)
