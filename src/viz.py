@@ -1,27 +1,33 @@
 from itertools import chain
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from random import random
 
 import tkinter as tk
 from tkinter import ttk
 from typing import Iterable, List, Optional
 
-from PIL import Image, ImageTk
-#import aggdraw
+from PIL import Image, ImageTk, ImageDraw
 
 # Minimum and maximum pixel dimensions for the generated image.
 MAX_SIZE = 720
 MIN_SIZE = 180
 
-# LINE_PEN = aggdraw.Pen(
-#     color=(0xFF, 0xFF, 0xFF),
-#     width=4,
-# )
-#
-# ARROW_PEN = aggdraw.Pen(
-#     color=(0x80, 0xC0, 0xFF, 0x80),
-#     width=1,
-# )
+LINE_PEN = dict(
+    fill=(0xFF, 0xFF, 0xFF),
+    width=4,
+)
+
+ARROW_PEN = dict(
+    fill=(0x80, 0xC0, 0xFF),
+    width=2,
+)
+
+DOT_PEN = dict(fill=(0xFF, 0x00, 0x00))
+
+DOT_RADIUS = 4
+
+JITTER = 0.05
 
 
 @dataclass(frozen=True)
@@ -29,11 +35,23 @@ class Point:
     x: float
     y: float
 
+    def jitter(self, amount=JITTER) -> "Point":
+        return Point(
+            self.x + random() * amount * 2 - amount,
+            self.y + random() * amount * 2 - amount,
+        )
+
 
 @dataclass(frozen=True)
 class Bounds:
     min: Point
     max: Point
+
+    def padded(self, padding: float) -> "Bounds":
+        return Bounds(
+            Point(self.min.x - padding, self.min.y - padding),
+            Point(self.max.x + padding, self.max.y + padding),
+        )
 
 
 @dataclass(frozen=True)
@@ -87,7 +105,7 @@ class Visualization:
         if self.current_path is None:
             self.current_path = PathGraphic([Point(self.x, self.y)])
             self.graphics.append(self.current_path)
-        self.current_path.path_points.append(Point(x, y))
+        self.current_path.path_points.append(Point(x, y).jitter())
         self.x = x
         self.y = y
 
@@ -96,7 +114,7 @@ class Visualization:
         self.graphics.append(
             ArrowGraphic(
                 source=Point(self.x, self.y),
-                target=Point(x, y),
+                target=Point(x, y).jitter(),
             )
         )
 
@@ -130,7 +148,7 @@ class Visualization:
         )
 
     def render(self):
-        bounds = self.bounds()
+        bounds = self.bounds().padded(5)
         bounds_width = bounds.max.x - bounds.min.x
         bounds_height = bounds.max.y - bounds.min.y
 
@@ -142,8 +160,8 @@ class Visualization:
         inner_x_offset = -bounds.min.x
         inner_y_offset = -bounds.min.y
 
-        outer_width = min(MAX_SIZE, max(MIN_SIZE, inner_scale * bounds_width))
-        outer_height = min(MAX_SIZE, max(MIN_SIZE, inner_scale * bounds_height))
+        outer_width = int(min(MAX_SIZE, max(MIN_SIZE, inner_scale * bounds_width)))
+        outer_height = int(min(MAX_SIZE, max(MIN_SIZE, inner_scale * bounds_height)))
 
         image = Image.new(
             mode="RGBA",
@@ -151,7 +169,7 @@ class Visualization:
             color=(0x00, 0x00, 0x00, 0xFF),
         )
 
-        draw = aggdraw.Draw(image)
+        draw = ImageDraw.Draw(image)
 
         for graphic in self.graphics:
             if isinstance(graphic, PathGraphic):
@@ -164,7 +182,7 @@ class Visualization:
                             inner_scale * (inner_y_offset + point.y),
                         )
                     ],
-                    LINE_PEN,
+                    **LINE_PEN,
                 )
             elif isinstance(graphic, ArrowGraphic):
                 draw.line(
@@ -176,12 +194,20 @@ class Visualization:
                             inner_scale * (inner_y_offset + point.y),
                         )
                     ],
-                    ARROW_PEN,
+                    **ARROW_PEN,
+                )
+            elif isinstance(graphic, DotGraphic):
+                draw.ellipse(
+                    [
+                        graphic.center.x - DOT_RADIUS,
+                        graphic.center.y - DOT_RADIUS,
+                        graphic.center.x + DOT_RADIUS,
+                        graphic.center.y + DOT_RADIUS,
+                    ],
+                    **DOT_PEN,
                 )
             else:
                 raise TypeError(f"expected a *Graphic, but got this: {graphic!r}")
-
-        draw.flush()
 
         return image
 

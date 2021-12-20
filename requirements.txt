@@ -1,4 +1,3 @@
-aggdraw==1.3.12
 black==21.12b0
 pillow==8.4.0
 pytest-custom_exit_code==0.3.0
