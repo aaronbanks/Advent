@@ -1,8 +1,11 @@
 from ..functions import run_solution
+from .. import viz
+
 import copy
 
 input_filename = "./inputs/202103.txt"
 expected_output = 3414905
+
 
 def solution(input_lines):
 
@@ -12,14 +15,17 @@ def solution(input_lines):
     calculate_c02_rating = copy.deepcopy(nested_list_storing_all_input_digits)
 
     # iterate through each digit, determine which lines should be deleted and then delete them.
-    binary_oxygen_rating = determine_and_delete_digits_from_oxygen(calculate_oxygen_rating)
-    binary_c02_rating  = determine_and_delete_digits_from_c02(calculate_c02_rating)
+    binary_oxygen_rating = determine_and_delete_digits_from_oxygen(
+        calculate_oxygen_rating
+    )
+    binary_c02_rating = determine_and_delete_digits_from_c02(calculate_c02_rating)
 
     decimal_oxygen_rating = convert_binary_number_to_decimal(binary_oxygen_rating)
     decimal_c02_rating = convert_binary_number_to_decimal(binary_c02_rating)
 
     answer = decimal_oxygen_rating * decimal_c02_rating
     return answer
+
 
 def convert_binary_number_to_decimal(binary_number_to_convert):
     conversion_counter = 0
@@ -35,6 +41,7 @@ def convert_binary_number_to_decimal(binary_number_to_convert):
 
     return conversion
 
+
 # This function goes through each line of the file and stores each digit seperately in a list of list
 def read_input_store_values(input_lines):
     nested_list_storing_all_input_digits = []
@@ -47,14 +54,14 @@ def read_input_store_values(input_lines):
         for character in line:
             current_line_contents.append(int(character))
 
-        #Create a list for each bit in line
+        # Create a list for each bit in line
         if first_line == True:
             for digit in current_line_contents:
                 nested_list_storing_all_input_digits.append([digit])
 
             first_line = False
 
-        #Populate lists with each bit in subsequent lines
+        # Populate lists with each bit in subsequent lines
         else:
             position_on_line = 0
             for digit in current_line_contents:
@@ -62,6 +69,7 @@ def read_input_store_values(input_lines):
                 position_on_line += 1
 
     return nested_list_storing_all_input_digits
+
 
 def determine_and_delete_digits_from_oxygen(calculate_oxygen_rating):
     for element in calculate_oxygen_rating:
@@ -92,11 +100,10 @@ def determine_and_delete_digits_from_oxygen(calculate_oxygen_rating):
                     positions_to_be_deleted_from_oxygen.append(counter)
 
         # delete all the positions that you determined should be deleted
-        #reversing the order means you start from the highest number and don't need to adjust anything as you go
+        # reversing the order means you start from the highest number and don't need to adjust anything as you go
         for position in reversed(positions_to_be_deleted_from_oxygen):
             for b in calculate_oxygen_rating:
                 del b[position]
-
 
         try:
             test = calculate_oxygen_rating[0][1]
@@ -105,6 +112,7 @@ def determine_and_delete_digits_from_oxygen(calculate_oxygen_rating):
             break
 
     return calculate_oxygen_rating
+
 
 def determine_and_delete_digits_from_c02(calculate_c02_rating):
     for element in calculate_c02_rating:
@@ -143,6 +151,7 @@ def determine_and_delete_digits_from_c02(calculate_c02_rating):
             break
 
     return calculate_c02_rating
+
 
 if __name__ == "__main__":
     run_solution(solution, input_filename, expected_output)

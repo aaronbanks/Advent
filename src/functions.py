@@ -1,3 +1,8 @@
+from . import viz
+
+import sys
+
+
 def read_lines(file_name):
     """Reads all of the lines from a text file into an list of strings.
 
@@ -26,3 +31,6 @@ def run_solution(solution_function, input_filename, expected_output=None):
             print(f"{output!r} (matches expected value)")
         else:
             print(f"{output!r} (does not match expected output {expected_output!r})")
+
+    if "--viz" in sys.argv:
+        viz.show()
