@@ -1,8 +1,9 @@
 from ..functions import run_solution
+from ..visual import Visualization
 
 input_filename = "./inputs/201703.txt"
 expected_output = 349975
-
+viz = Visualization()
 
 def solution(input_lines):
     input = int(input_lines[0])
@@ -18,6 +19,9 @@ def solution(input_lines):
     current_x_coordinate = 1
     current_y_coordinate = 0
 
+    viz.move_to(0, 0)
+    viz.stroke_to(current_x_coordinate, current_y_coordinate)
+
     while True:
         position_counter += 1
 
@@ -30,6 +34,8 @@ def solution(input_lines):
         grid_positions_values[
             (current_x_coordinate, current_y_coordinate)
         ] = current_position_value
+
+        viz.stroke_to(current_x_coordinate, current_y_coordinate)
 
         # 3# THIS IS THE CONDITION FOR ANSWERING THIS QUESTION
         if current_position_value > input:
@@ -73,12 +79,15 @@ def value_of_surrounding_coordinates(
             if x_modifier == 0 and y_modifier == 0:
                 continue
 
-            value_counter += grid_positions_values.get(
-                (current_x_coordinate + x_modifier, current_y_coordinate + y_modifier),
-                0,
-            )
+            x = current_x_coordinate + x_modifier
+            y = current_y_coordinate + y_modifier
+
+            value_counter += grid_positions_values.get((x, y), 0)
+
+            viz.peek_at(x, y)
     return value_counter
 
 
 if __name__ == "__main__":
     run_solution(solution, input_filename, expected_output)
+    viz.show()
