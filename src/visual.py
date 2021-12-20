@@ -5,6 +5,15 @@ from PIL import Image, ImageShow, ImageTk
 import aggdraw
 
 
+"""
+What capabilities?
+
+We want to display dots in cells?
+
+
+"""
+
+
 class InfiniteCanvas:
     def __init__(self):
         self.default_line = CanvasLine(self)
@@ -54,12 +63,17 @@ def main():
     )
     draw.flush()
 
+    show(image)
+    show(image)
+
+
+def show(image):
     root = tk.Tk()
     root.title("Advent of Code")
     root.resizable(False, False)
 
     tk_image = ImageTk.PhotoImage(image)
-    panel = tk.Label(root, image=tk_image)
+    panel = ttk.Label(root, image=tk_image)
     panel.pack(fill="both", expand="yes")
 
     root.mainloop()

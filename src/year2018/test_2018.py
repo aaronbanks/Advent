@@ -1,6 +1,6 @@
 __package__ = "src.year2018"
 
-from ..functions import assert_solution_module_expected_output
+from ..testing import assert_solution_module_expected_output
 
 from . import (
     day1_1,

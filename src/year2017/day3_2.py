@@ -1,5 +1,11 @@
-def main():
-    input = 347991
+from ..functions import run_solution
+
+input_filename = "./inputs/201703.txt"
+expected_output = 349975
+
+
+def solution(input_lines):
+    input = int(input_lines[0])
 
     grid_positions_values = {(0, 0): 1}
 
@@ -54,6 +60,8 @@ def main():
 
         perimeter_move_counter += 1
 
+    return current_position_value
+
 
 def value_of_surrounding_coordinates(
     current_x_coordinate, current_y_coordinate, grid_positions_values
@@ -73,4 +81,4 @@ def value_of_surrounding_coordinates(
 
 
 if __name__ == "__main__":
-    main()
+    run_solution(solution, input_filename, expected_output)
