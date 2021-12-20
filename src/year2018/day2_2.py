@@ -1,7 +1,7 @@
 from ..functions import run_solution
 
 input_filename = "./inputs/201802.txt"
-expected_output = ...
+expected_output = "agimdjvlhedpsyoqfzuknpjwt"
 
 
 def solution(input_lines):
@@ -16,7 +16,7 @@ def solution(input_lines):
         for character in line:
             current_line_content.append(character)
 
-        for lines in input:
+        for lines in input_lines:
 
             if lines == line:
                 continue

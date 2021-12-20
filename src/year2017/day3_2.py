@@ -1,7 +1,16 @@
-def main():
-    input = 347991
+from .. import viz
+
+from ..functions import run_solution
+
+input_filename = "./inputs/201703.txt"
+expected_output = 32
+
+
+def solution(input_lines):
+    input = int(input_lines[0])
 
     grid_positions_values = {(0, 0): 1}
+    viz.move_to(0, 0)
 
     previous_perimeter_end = 1
     current_perimeter_level = 0
@@ -13,6 +22,8 @@ def main():
     current_y_coordinate = 0
 
     while True:
+        viz.line_to(current_x_coordinate, current_y_coordinate)
+
         position_counter += 1
 
         # 1# CALCULATE_CURRENT_POSITION's_VALUE BASED ON SURROUNDING COORDINATES
@@ -54,6 +65,8 @@ def main():
 
         perimeter_move_counter += 1
 
+    return current_perimeter_size
+
 
 def value_of_surrounding_coordinates(
     current_x_coordinate, current_y_coordinate, grid_positions_values
@@ -65,12 +78,14 @@ def value_of_surrounding_coordinates(
             if x_modifier == 0 and y_modifier == 0:
                 continue
 
-            value_counter += grid_positions_values.get(
-                (current_x_coordinate + x_modifier, current_y_coordinate + y_modifier),
-                0,
-            )
+            x = current_x_coordinate + x_modifier
+            y = current_y_coordinate + y_modifier
+
+            value_counter += grid_positions_values.get((x, y), 0)
+
+            viz.point_at(x, y)
     return value_counter
 
 
 if __name__ == "__main__":
-    main()
+    run_solution(solution, input_filename, expected_output)

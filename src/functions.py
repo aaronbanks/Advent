@@ -1,8 +1,17 @@
+from . import viz
+
+import sys
+
+
 def read_lines(file_name):
+    """Reads all of the lines from a text file into an list of strings.
+
+    Leading and trailing whitespace is stripped.
+    """
 
     return_list = []
 
-    with open(file_name, "r") as input:
+    with open(file_name, "rt") as input:
 
         for line in input:
             return_list.append(line.strip())
@@ -23,18 +32,5 @@ def run_solution(solution_function, input_filename, expected_output=None):
         else:
             print(f"{output!r} (does not match expected output {expected_output!r})")
 
-
-def assert_solution_module_expected_output(solution_module):
-    if getattr(solution_module, "expected_output", None) is None:
-        print(
-            f"Ignoring {solution_module.__name__} as it doesn't export any .expected_output property."
-        )
-        return
-
-    input_lines = read_lines(solution_module.input_filename)
-    output = solution_module.solution(input_lines)
-
-    assert output == solution_module.expected_output, (
-        f"{solution_module.__name__}: actual output ({output!r}) did not match "
-        f"expected output ({solution_module.expected_output!r})."
-    )
+    if "--viz" in sys.argv:
+        viz.show()
