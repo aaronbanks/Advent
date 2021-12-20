@@ -9,6 +9,65 @@ from typing import Iterable, List, Optional
 from PIL import Image, ImageTk
 import aggdraw
 
+# Minimum and maximum pixel dimensions for the generated image.
+MAX_SIZE = 720
+MIN_SIZE = 180
+
+LINE_PEN = aggdraw.Pen(
+    color=(0xFF, 0xFF, 0xFF),
+    width=4,
+)
+
+ARROW_PEN = aggdraw.Pen(
+    color=(0x80, 0xC0, 0xFF, 0x80),
+    width=1,
+)
+
+
+@dataclass(frozen=True)
+class Point:
+    x: float
+    y: float
+
+
+@dataclass(frozen=True)
+class Bounds:
+    min: Point
+    max: Point
+
+
+@dataclass(frozen=True)
+class AbstractGraphic(ABC):
+    @abstractmethod
+    def points(self) -> Iterable[Point]:
+        return []
+
+
+@dataclass(frozen=True)
+class ArrowGraphic(AbstractGraphic):
+    source: Point
+    target: Point
+
+    def points(self):
+        yield self.source
+        yield self.target
+
+
+@dataclass(frozen=True)
+class PathGraphic(AbstractGraphic):
+    path_points: List[Point]
+
+    def points(self):
+        yield from self.path_points
+
+
+@dataclass(frozen=True)
+class DotGraphic(AbstractGraphic):
+    center: Point
+
+    def points(self):
+        yield self.center
+
 
 class Visualization:
     def __init__(self):
@@ -28,7 +87,7 @@ class Visualization:
         if self.current_path is None:
             self.current_path = PathGraphic([Point(self.x, self.y)])
             self.graphics.append(self.current_path)
-        self.current_path.points.append(Point(x, y))
+        self.current_path.path_points.append(Point(x, y))
         self.x = x
         self.y = y
 
@@ -45,26 +104,83 @@ class Visualization:
         """Draws a dot at the coordinates, without moving the pen."""
         self.graphics.append(DotGraphic(Point(x, y)))
 
+    def points(self) -> Iterable[Point]:
+        for graphic in self.graphics:
+            yield from graphic.points()
+
+    def bounds(self) -> Bounds:
+        x_min = 0
+        y_min = 0
+        x_max = 1
+        y_max = 1
+
+        for point in self.points():
+            if point.x < x_min:
+                x_min = point.x
+            if point.y < y_min:
+                y_min = point.y
+            if point.x > x_max:
+                x_max = point.x
+            if point.y > y_max:
+                y_max = point.y
+
+        return Bounds(
+            Point(x_min, y_min),
+            Point(x_max, y_max),
+        )
+
     def render(self):
+        bounds = self.bounds()
+        bounds_width = bounds.max.x - bounds.min.x
+        bounds_height = bounds.max.y - bounds.min.y
+
+        if bounds_width > bounds_height:
+            inner_scale = MAX_SIZE / bounds_width
+        else:
+            inner_scale = MAX_SIZE / bounds_height
+
+        inner_x_offset = -bounds.min.x
+        inner_y_offset = -bounds.min.y
+
+        outer_width = min(MAX_SIZE, max(MIN_SIZE, inner_scale * bounds_width))
+        outer_height = min(MAX_SIZE, max(MIN_SIZE, inner_scale * bounds_height))
+
         image = Image.new(
-            mode="RGB",
-            size=(512, 512),
-            color=(0, 0, 0),
+            mode="RGBA",
+            size=(outer_width, outer_height),
+            color=(0x00, 0x00, 0x00, 0xFF),
         )
 
         draw = aggdraw.Draw(image)
-        pen = aggdraw.Pen(
-            color=(0xFF, 0xFF, 0xFF),
-            width=2,
-        )
 
-        coords = list(chain.from_iterable(self.coords))
-        coords = [c * 20 + 200 for c in coords]
+        for graphic in self.graphics:
+            if isinstance(graphic, PathGraphic):
+                draw.line(
+                    [
+                        c
+                        for point in graphic.points()
+                        for c in (
+                            inner_scale * (inner_x_offset + point.x),
+                            inner_scale * (inner_y_offset + point.y),
+                        )
+                    ],
+                    LINE_PEN,
+                )
+            elif isinstance(graphic, ArrowGraphic):
+                draw.line(
+                    [
+                        c
+                        for point in graphic.points()
+                        for c in (
+                            inner_scale * (inner_x_offset + point.x),
+                            inner_scale * (inner_y_offset + point.y),
+                        )
+                    ],
+                    ARROW_PEN,
+                )
+            else:
+                raise TypeError(f"expected a *Graphic, but got this: {graphic!r}")
 
-        draw.line(
-            coords,
-            pen,
-        )
         draw.flush()
 
         return image
@@ -91,72 +207,6 @@ class Visualization:
 
         root.focus_force()
         root.mainloop()
-
-
-@dataclass(frozen=True)
-class Point:
-    x: float
-    y: float
-
-
-@dataclass(frozen=True)
-class Bounds:
-    min: Point
-    max: Point
-
-
-@dataclass(frozen=True)
-class AbstractGraphic(ABC):
-    @abstractmethod
-    def points(self) -> Iterable[Point]:
-        return []
-
-    def bounds(self) -> Bounds:
-        x_min = 0
-        y_min = 0
-        x_max = 1
-        y_max = 1
-
-        for point in self.points():
-            if point.x < x_min:
-                x_min = point.x
-            if point.y < y_min:
-                y_min = point.y
-            if point.x > x_max:
-                x_max = point.x
-            if point.y > y_max:
-                y_max = point.y
-
-        return Bounds(
-            Point(x_min, y_min),
-            Point(x_max, y_max),
-        )
-
-
-@dataclass(frozen=True)
-class ArrowGraphic(AbstractGraphic):
-    source: Point
-    target: Point
-
-    def points(self):
-        yield self.source
-        yield self.target
-
-
-@dataclass(frozen=True)
-class PathGraphic(AbstractGraphic):
-    points: List[Point]
-
-    def points(self):
-        yield from self.points
-
-
-@dataclass(frozen=True)
-class DotGraphic(AbstractGraphic):
-    center: Point
-
-    def points(self):
-        yield self.center
 
 
 # A default instance, with methods exported as module functions, for ease of use.
