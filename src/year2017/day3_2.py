@@ -31,7 +31,6 @@ def main():
             break
 
         # 4# MOVE TO THE NEXT POSITION IN THE SPIRAL
-
         if position_counter > current_perimeter_size + previous_perimeter_end:
             previous_perimeter_end = position_counter - 1
             current_perimeter_level += 1
