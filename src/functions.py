@@ -34,3 +34,18 @@ def run_solution(solution_function, input_filename, expected_output=None):
 
     if "--viz" in sys.argv:
         viz.show()
+
+
+def read_input_and_store_values_in_nested_list(input_lines):
+    nested_list_containing_input = []
+
+    for line in input_lines:
+
+        current_line_contents = []
+
+        for character in line:
+            current_line_contents.append(character)
+
+        nested_list_containing_input.append(current_line_contents)
+
+    return nested_list_containing_input

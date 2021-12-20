@@ -7,21 +7,21 @@ from tkinter import ttk
 from typing import Iterable, List, Optional
 
 from PIL import Image, ImageTk
-import aggdraw
+#import aggdraw
 
 # Minimum and maximum pixel dimensions for the generated image.
 MAX_SIZE = 720
 MIN_SIZE = 180
 
-LINE_PEN = aggdraw.Pen(
-    color=(0xFF, 0xFF, 0xFF),
-    width=4,
-)
-
-ARROW_PEN = aggdraw.Pen(
-    color=(0x80, 0xC0, 0xFF, 0x80),
-    width=1,
-)
+# LINE_PEN = aggdraw.Pen(
+#     color=(0xFF, 0xFF, 0xFF),
+#     width=4,
+# )
+#
+# ARROW_PEN = aggdraw.Pen(
+#     color=(0x80, 0xC0, 0xFF, 0x80),
+#     width=1,
+# )
 
 
 @dataclass(frozen=True)
