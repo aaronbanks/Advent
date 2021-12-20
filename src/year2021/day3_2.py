@@ -21,6 +21,8 @@ def solution(input_lines):
     answer = decimal_oxygen_rating * decimal_c02_rating
     print(f"answer: {answer}")
 
+    return answer
+
 def convert_binary_number_to_decimal(binary_number_to_convert):
     conversion_counter = 0
     length_of_number = 0
