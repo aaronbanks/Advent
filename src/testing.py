@@ -1,23 +1,22 @@
-def main():
-
-    current_x_coordinate = 1
-    current_y_coordinate = 1
-
-    current_position_value = 1
-
-    grid_positions_values = {"0X0": 1}
-
-    str_grid_position = str(current_x_coordinate) + "X" + str(current_y_coordinate)
-
-    grid_positions_values[str_grid_position] = current_position_value
-
-    print(grid_positions_values)
-
-    str_grid_position = str(current_x_coordinate - 1 + 1) + "X" + str(current_y_coordinate)
-    test = grid_positions_values[str_grid_position]
-
-    print(test)
+from .functions import read_lines
 
 
-if __name__ == "__main__":
-    main()
+def assert_solution_module_expected_output(solution_module):
+    """Asserts that a given solution module produces its expected output.
+
+    Has no effect unless the module exports a non-None .expected_output property.
+    """
+
+    if getattr(solution_module, "expected_output", None) is None:
+        print(
+            f"Ignoring {solution_module.__name__} as it doesn't export any .expected_output property."
+        )
+        return
+
+    input_lines = read_lines(solution_module.input_filename)
+    output = solution_module.solution(input_lines)
+
+    assert output == solution_module.expected_output, (
+        f"{solution_module.__name__}: actual output ({output!r}) did not match "
+        f"expected output ({solution_module.expected_output!r})."
+    )
