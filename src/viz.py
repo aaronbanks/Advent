@@ -14,15 +14,12 @@ MAX_SIZE = 720
 MIN_SIZE = 180
 
 
-JITTER = 0
-
-
 @dataclass(frozen=True)
 class Transformation:
     x_scale: float = 1.0
     y_scale: float = 1.0
-    y_offset: float = 0.0
     x_offset: float = 0.0
+    y_offset: float = 0.0
 
     def __call__(self, point: "Point") -> "Point":
         return Point(
@@ -35,12 +32,6 @@ class Transformation:
 class Point:
     x: float
     y: float
-
-    def jitter(self, amount=JITTER) -> "Point":
-        return Point(
-            self.x + random() * amount * 2 - amount,
-            self.y + random() * amount * 2 - amount,
-        )
 
 
 @dataclass(frozen=True)
@@ -101,12 +92,15 @@ class Visualization:
         self.y = y
         self.current_path = None
 
-    def line_to(self, x, y):
+    def line_to(self, x, y=None):
         """Moves the pen to the coordinates, stroking a line along the way."""
+        if y is None:
+            y = self.y + 1
+
         if self.current_path is None:
             self.current_path = PathGraphic([Point(self.x, self.y)])
             self.graphics.append(self.current_path)
-        self.current_path.path_points.append(Point(x, y).jitter())
+        self.current_path.path_points.append(Point(x, y))
         self.x = x
         self.y = y
 
@@ -115,41 +109,51 @@ class Visualization:
         self.graphics.append(
             ArrowGraphic(
                 source=Point(self.x, self.y),
-                target=Point(x, y).jitter(),
+                target=Point(x, y),
             )
         )
 
     def dot_at(self, x, y):
         """Draws a dot at the coordinates, without moving the pen."""
-        self.graphics.append(DotGraphic(Point(x, y).jitter()))
+        self.graphics.append(DotGraphic(Point(x, y)))
 
     def points(self) -> Iterable[Point]:
         for graphic in self.graphics:
             yield from graphic.points()
 
     def bounds(self) -> Bounds:
-        x_min = 0
-        y_min = 0
-        x_max = 1
-        y_max = 1
+        count = 0
 
         for point in self.points():
-            if point.x < x_min:
+            if count == 0 or point.x < x_min:
                 x_min = point.x
-            if point.y < y_min:
+            if count == 0 or point.y < y_min:
                 y_min = point.y
-            if point.x > x_max:
+            if count == 0 or point.x > x_max:
                 x_max = point.x
-            if point.y > y_max:
+            if count == 0 or point.y > y_max:
                 y_max = point.y
 
-        return Bounds(
-            Point(x_min, y_min),
-            Point(x_max, y_max),
-        )
+            count += 1
+
+        if count >= 2:
+            return Bounds(
+                Point(x_min, y_min),
+                Point(x_max, y_max),
+            )
+        elif count == 1:
+            return Bounds(
+                Point(x_min - 1, y_min - 1),
+                Point(x_max + 1, y_max + 1),
+            )
+        else:
+            return Bounds(Point(0, 0), Point(1, 1))
 
     def render(self):
-        bounds = self.bounds().padded(2)
+        bounds = self.bounds()
+        print(f"[viz] Inner bounds: {bounds}")
+
+        bounds = bounds.padded(2)
         bounds_width = bounds.max.x - bounds.min.x
         bounds_height = bounds.max.y - bounds.min.y
 
@@ -162,8 +166,10 @@ class Visualization:
             scale, scale, -bounds.min.x * scale, -bounds.min.y * scale
         )
 
-        outer_width = int(min(MAX_SIZE, max(MIN_SIZE, scale * bounds_width)))
-        outer_height = int(min(MAX_SIZE, max(MIN_SIZE, scale * bounds_height)))
+        print(f"[viz] to_pixel_space: {to_pixel_space}")
+
+        outer_width = int(clamp(MIN_SIZE, scale * bounds_width, MAX_SIZE))
+        outer_height = int(clamp(MIN_SIZE, scale * bounds_height, MAX_SIZE))
 
         image = Image.new(
             mode="RGBA",
@@ -184,19 +190,30 @@ class Visualization:
 
             image.alpha_composite(buffer)
 
-        dot_radius = 10
+        line_color_index = 0
+        line_colors = [
+            (0xFF, 0xFF, 0xFF, 0xE0),
+            (0x80, 0xFF, 0xD0, 0xE0),
+            (0xD0, 0x80, 0xFF, 0xE0),
+            (0x80, 0xD0, 0xFF, 0xE0),
+        ]
 
         for graphic in self.graphics:
             if isinstance(graphic, PathGraphic):
+                width = int(clamp(1, scale * 0.125, 16))
+
                 alpha_draw(
                     lambda draw: draw.line(
                         [as_tuple(to_pixel_space(point)) for point in graphic.points()],
-                        fill=(0xFF, 0xFF, 0xFF, 0xE0),
-                        width=4,
+                        fill=line_colors[line_color_index % len(line_colors)],
+                        width=width,
                         joint="curve",
                     )
                 )
+
+                line_color_index += 1
             elif isinstance(graphic, ArrowGraphic):
+                width = int(clamp(1, scale * 0.125, 16))
 
                 @alpha_draw
                 def _(draw):
@@ -213,11 +230,13 @@ class Visualization:
                         draw.line(
                             [source, target],
                             fill=(0x80, 0xD0, 0xFF, 0x40),
-                            width=2,
+                            width=width,
                         )
 
             elif isinstance(graphic, DotGraphic):
                 center = to_pixel_space(graphic.center)
+
+                dot_radius = clamp(2, scale * 0.5, 32)
                 alpha_draw(
                     lambda draw: draw.ellipse(
                         [
@@ -226,7 +245,7 @@ class Visualization:
                             center.x + dot_radius,
                             center.y + dot_radius,
                         ],
-                        fill=(0xFF, 0xD0, 0x00, 0x80),
+                        fill=(0xFF, 0xD0, 0x00, 0xD0),
                     )
                 )
             else:
@@ -256,6 +275,15 @@ class Visualization:
 
         root.focus_force()
         root.mainloop()
+
+
+def clamp(min, x, max):
+    if x < min:
+        return min
+    elif x > max:
+        return max
+    else:
+        return x
 
 
 # A default instance, with methods exported as module functions, for ease of use.
