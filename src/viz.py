@@ -1,17 +1,48 @@
-from itertools import chain
-from dataclasses import dataclass, astuple as as_tuple
+from itertools import cycle
+from dataclasses import dataclass, astuple as as_tuple, field
 from abc import ABC, abstractmethod
 from random import random
 
 import tkinter as tk
 from tkinter import ttk
-from typing import Iterable, List, Optional
+from typing import Any, Iterable, List, Optional
 
 from PIL import Image, ImageTk, ImageDraw
 
 # Minimum and maximum pixel dimensions for the generated image.
 MAX_SIZE = 720
-MIN_SIZE = 180
+MIN_SIZE = 90
+
+default_line_colors = iter(
+    cycle(
+        [
+            (0xFF, 0xFF, 0xFF, 0xE0),
+            (0x80, 0xFF, 0xD0, 0xE0),
+            (0xD0, 0x80, 0xFF, 0xE0),
+            (0x80, 0xD0, 0xFF, 0xE0),
+        ]
+    )
+)
+
+default_arrow_colors = iter(
+    cycle(
+        [
+            (0x80, 0xD0, 0xFF, 0x40),
+            (0xFF, 0x80, 0xD0, 0x40),
+            (0xD0, 0xFF, 0x80, 0x40),
+        ]
+    )
+)
+
+default_dot_colors = iter(
+    cycle(
+        [
+            (0xFF, 0xD0, 0x00, 0xD0),
+            (0xD0, 0x00, 0xFF, 0xD0),
+            (0x00, 0xFF, 0xD0, 0xD0),
+        ]
+    )
+)
 
 
 @dataclass(frozen=True)
@@ -46,14 +77,17 @@ class Bounds:
         )
 
 
-@dataclass(frozen=True)
+@dataclass
 class AbstractGraphic(ABC):
+    color: any
+    z: float
+
     @abstractmethod
     def points(self) -> Iterable[Point]:
         return []
 
 
-@dataclass(frozen=True)
+@dataclass
 class ArrowGraphic(AbstractGraphic):
     source: Point
     target: Point
@@ -63,7 +97,7 @@ class ArrowGraphic(AbstractGraphic):
         yield self.target
 
 
-@dataclass(frozen=True)
+@dataclass
 class PathGraphic(AbstractGraphic):
     path_points: List[Point]
 
@@ -71,7 +105,7 @@ class PathGraphic(AbstractGraphic):
         yield from self.path_points
 
 
-@dataclass(frozen=True)
+@dataclass
 class DotGraphic(AbstractGraphic):
     center: Point
 
@@ -79,12 +113,18 @@ class DotGraphic(AbstractGraphic):
         yield self.center
 
 
-class Visualization:
-    def __init__(self):
-        self.x: float = 0
-        self.y: float = 0
-        self.graphics: List[AbstractGraphic] = []
-        self.current_path: Optional[PathGraphic] = None
+@dataclass
+class Layer:
+    viz: "Visualization"
+
+    line_color: Any
+    arrow_color: Any
+    dot_color: Any
+
+    x: float = 0
+    y: float = 0
+    z: float = 0
+    current_path: Optional[PathGraphic] = None
 
     def move_to(self, x, y):
         """Moves the pen to the coordinates, without drawing anything."""
@@ -98,16 +138,22 @@ class Visualization:
             y = self.y + 1
 
         if self.current_path is None:
-            self.current_path = PathGraphic([Point(self.x, self.y)])
-            self.graphics.append(self.current_path)
+            self.current_path = PathGraphic(
+                color=self.line_color,
+                z=self.z,
+                path_points=[Point(self.x, self.y)],
+            )
+            self.viz.graphics.append(self.current_path)
         self.current_path.path_points.append(Point(x, y))
         self.x = x
         self.y = y
 
     def point_at(self, x, y):
         """Draws an arrow from the pen to the coordinates, without moving the pen."""
-        self.graphics.append(
+        self.viz.graphics.append(
             ArrowGraphic(
+                color=self.arrow_color,
+                z=self.z,
                 source=Point(self.x, self.y),
                 target=Point(x, y),
             )
@@ -115,7 +161,47 @@ class Visualization:
 
     def dot_at(self, x, y):
         """Draws a dot at the coordinates, without moving the pen."""
-        self.graphics.append(DotGraphic(Point(x, y)))
+        self.viz.graphics.append(
+            DotGraphic(color=self.dot_color, z=self.z, center=Point(x, y))
+        )
+
+
+@dataclass
+class Visualization:
+    graphics: List[AbstractGraphic] = field(default_factory=list)
+    _default_layer: Optional["Layer"] = None
+
+    def default_layer(self):
+        if self._default_layer is None:
+            self._default_layer = self.new_layer()
+        return self._default_layer
+
+    def new_layer(
+        self, color=None, line_color=None, arrow_color=None, dot_color=None, z=0
+    ):
+        return Layer(
+            self,
+            line_color=line_color or color or next(default_line_colors),
+            arrow_color=arrow_color or color or next(default_arrow_colors),
+            dot_color=dot_color or color or next(default_dot_colors),
+            z=z,
+        )
+
+    def move_to(self, x, y):
+        """Moves the pen to the coordinates, without drawing anything."""
+        self.default_layer().move_to(x, y)
+
+    def line_to(self, x, y=None):
+        """Moves the pen to the coordinates, stroking a line along the way."""
+        self.default_layer().line_to(x, y)
+
+    def point_at(self, x, y):
+        """Draws an arrow from the pen to the coordinates, without moving the pen."""
+        self.default_layer().point_at(x, y)
+
+    def dot_at(self, x, y):
+        """Draws a dot at the coordinates, without moving the pen."""
+        self.default_layer().dot_at(x, y)
 
     def points(self) -> Iterable[Point]:
         for graphic in self.graphics:
@@ -151,7 +237,6 @@ class Visualization:
 
     def render(self):
         bounds = self.bounds()
-        print(f"[viz] Inner bounds: {bounds}")
 
         bounds = bounds.padded(2)
         bounds_width = bounds.max.x - bounds.min.x
@@ -165,8 +250,6 @@ class Visualization:
         to_pixel_space = Transformation(
             scale, scale, -bounds.min.x * scale, -bounds.min.y * scale
         )
-
-        print(f"[viz] to_pixel_space: {to_pixel_space}")
 
         outer_width = int(clamp(MIN_SIZE, scale * bounds_width, MAX_SIZE))
         outer_height = int(clamp(MIN_SIZE, scale * bounds_height, MAX_SIZE))
@@ -190,28 +273,18 @@ class Visualization:
 
             image.alpha_composite(buffer)
 
-        line_color_index = 0
-        line_colors = [
-            (0xFF, 0xFF, 0xFF, 0xE0),
-            (0x80, 0xFF, 0xD0, 0xE0),
-            (0xD0, 0x80, 0xFF, 0xE0),
-            (0x80, 0xD0, 0xFF, 0xE0),
-        ]
-
-        for graphic in self.graphics:
+        for graphic in sorted(self.graphics, key=lambda g: g.z):
             if isinstance(graphic, PathGraphic):
                 width = int(clamp(1, scale * 0.125, 16))
 
                 alpha_draw(
                     lambda draw: draw.line(
                         [as_tuple(to_pixel_space(point)) for point in graphic.points()],
-                        fill=line_colors[line_color_index % len(line_colors)],
+                        fill=graphic.color,
                         width=width,
                         joint="curve",
                     )
                 )
-
-                line_color_index += 1
             elif isinstance(graphic, ArrowGraphic):
                 width = int(clamp(1, scale * 0.125, 16))
 
@@ -229,7 +302,7 @@ class Visualization:
                         target = as_tuple(to_pixel_space(graphic.target))
                         draw.line(
                             [source, target],
-                            fill=(0x80, 0xD0, 0xFF, 0x40),
+                            fill=graphic.color,
                             width=width,
                         )
 
@@ -245,7 +318,7 @@ class Visualization:
                             center.x + dot_radius,
                             center.y + dot_radius,
                         ],
-                        fill=(0xFF, 0xD0, 0x00, 0xD0),
+                        fill=graphic.color,
                     )
                 )
             else:
@@ -293,6 +366,7 @@ line_to = _default.line_to
 point_at = _default.point_at
 dot_at = _default.dot_at
 show = _default.show
+new_layer = _default.new_layer
 
 
 def main():

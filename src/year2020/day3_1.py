@@ -24,7 +24,13 @@ def solution(input_lines):
     current_line_count = 2
     current_location_on_line = 0
 
+    all_trees_layer = viz.new_layer(color="green", z=-1)
+
     for line in nested_list_containing_input:
+        for location, character in enumerate(line):
+            if character == "#":
+                all_trees_layer.dot_at(location, current_line_count)
+
         if first_line == True:
             line[current_location_on_line] = "O"
             first_line = False
