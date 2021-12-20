@@ -1,27 +1,62 @@
-from itertools import chain
-from dataclasses import dataclass
+from itertools import cycle
+from dataclasses import dataclass, astuple as as_tuple, field
 from abc import ABC, abstractmethod
+from random import random
 
 import tkinter as tk
 from tkinter import ttk
-from typing import Iterable, List, Optional
+from typing import Any, Iterable, List, Optional
 
-from PIL import Image, ImageTk
-#import aggdraw
+from PIL import Image, ImageTk, ImageDraw
 
 # Minimum and maximum pixel dimensions for the generated image.
 MAX_SIZE = 720
-MIN_SIZE = 180
+MIN_SIZE = 90
 
-# LINE_PEN = aggdraw.Pen(
-#     color=(0xFF, 0xFF, 0xFF),
-#     width=4,
-# )
-#
-# ARROW_PEN = aggdraw.Pen(
-#     color=(0x80, 0xC0, 0xFF, 0x80),
-#     width=1,
-# )
+default_line_colors = iter(
+    cycle(
+        [
+            (0xFF, 0xFF, 0xFF, 0xE0),
+            (0x80, 0xFF, 0xD0, 0xE0),
+            (0xD0, 0x80, 0xFF, 0xE0),
+            (0x80, 0xD0, 0xFF, 0xE0),
+        ]
+    )
+)
+
+default_arrow_colors = iter(
+    cycle(
+        [
+            (0x80, 0xD0, 0xFF, 0x40),
+            (0xFF, 0x80, 0xD0, 0x40),
+            (0xD0, 0xFF, 0x80, 0x40),
+        ]
+    )
+)
+
+default_dot_colors = iter(
+    cycle(
+        [
+            (0xFF, 0xD0, 0x00, 0xD0),
+            (0xD0, 0x00, 0xFF, 0xD0),
+            (0x00, 0xFF, 0xD0, 0xD0),
+        ]
+    )
+)
+
+
+@dataclass(frozen=True)
+class Transformation:
+    x_scale: float = 1.0
+    y_scale: float = 1.0
+    x_offset: float = 0.0
+    y_offset: float = 0.0
+
+    def __call__(self, point: "Point") -> "Point":
+        return Point(
+            point.x * self.x_scale + self.x_offset,
+            point.y * self.y_scale + self.y_offset,
+        )
 
 
 @dataclass(frozen=True)
@@ -35,15 +70,24 @@ class Bounds:
     min: Point
     max: Point
 
+    def padded(self, padding: float) -> "Bounds":
+        return Bounds(
+            Point(self.min.x - padding, self.min.y - padding),
+            Point(self.max.x + padding, self.max.y + padding),
+        )
 
-@dataclass(frozen=True)
+
+@dataclass
 class AbstractGraphic(ABC):
+    color: any
+    z: float
+
     @abstractmethod
     def points(self) -> Iterable[Point]:
         return []
 
 
-@dataclass(frozen=True)
+@dataclass
 class ArrowGraphic(AbstractGraphic):
     source: Point
     target: Point
@@ -53,7 +97,7 @@ class ArrowGraphic(AbstractGraphic):
         yield self.target
 
 
-@dataclass(frozen=True)
+@dataclass
 class PathGraphic(AbstractGraphic):
     path_points: List[Point]
 
@@ -61,7 +105,7 @@ class PathGraphic(AbstractGraphic):
         yield from self.path_points
 
 
-@dataclass(frozen=True)
+@dataclass
 class DotGraphic(AbstractGraphic):
     center: Point
 
@@ -69,12 +113,18 @@ class DotGraphic(AbstractGraphic):
         yield self.center
 
 
-class Visualization:
-    def __init__(self):
-        self.x: float = 0
-        self.y: float = 0
-        self.graphics: List[AbstractGraphic] = []
-        self.current_path: Optional[PathGraphic] = None
+@dataclass
+class Layer:
+    viz: "Visualization"
+
+    line_color: Any
+    arrow_color: Any
+    dot_color: Any
+
+    x: float = 0
+    y: float = 0
+    z: float = 0
+    current_path: Optional[PathGraphic] = None
 
     def move_to(self, x, y):
         """Moves the pen to the coordinates, without drawing anything."""
@@ -82,19 +132,28 @@ class Visualization:
         self.y = y
         self.current_path = None
 
-    def line_to(self, x, y):
+    def line_to(self, x, y=None):
         """Moves the pen to the coordinates, stroking a line along the way."""
+        if y is None:
+            y = self.y + 1
+
         if self.current_path is None:
-            self.current_path = PathGraphic([Point(self.x, self.y)])
-            self.graphics.append(self.current_path)
+            self.current_path = PathGraphic(
+                color=self.line_color,
+                z=self.z,
+                path_points=[Point(self.x, self.y)],
+            )
+            self.viz.graphics.append(self.current_path)
         self.current_path.path_points.append(Point(x, y))
         self.x = x
         self.y = y
 
     def point_at(self, x, y):
         """Draws an arrow from the pen to the coordinates, without moving the pen."""
-        self.graphics.append(
+        self.viz.graphics.append(
             ArrowGraphic(
+                color=self.arrow_color,
+                z=self.z,
                 source=Point(self.x, self.y),
                 target=Point(x, y),
             )
@@ -102,48 +161,98 @@ class Visualization:
 
     def dot_at(self, x, y):
         """Draws a dot at the coordinates, without moving the pen."""
-        self.graphics.append(DotGraphic(Point(x, y)))
+        self.viz.graphics.append(
+            DotGraphic(color=self.dot_color, z=self.z, center=Point(x, y))
+        )
+
+
+@dataclass
+class Visualization:
+    graphics: List[AbstractGraphic] = field(default_factory=list)
+    _default_layer: Optional["Layer"] = None
+
+    def default_layer(self):
+        if self._default_layer is None:
+            self._default_layer = self.new_layer()
+        return self._default_layer
+
+    def new_layer(
+        self, color=None, line_color=None, arrow_color=None, dot_color=None, z=0
+    ):
+        return Layer(
+            self,
+            line_color=line_color or color or next(default_line_colors),
+            arrow_color=arrow_color or color or next(default_arrow_colors),
+            dot_color=dot_color or color or next(default_dot_colors),
+            z=z,
+        )
+
+    def move_to(self, x, y):
+        """Moves the pen to the coordinates, without drawing anything."""
+        self.default_layer().move_to(x, y)
+
+    def line_to(self, x, y=None):
+        """Moves the pen to the coordinates, stroking a line along the way."""
+        self.default_layer().line_to(x, y)
+
+    def point_at(self, x, y):
+        """Draws an arrow from the pen to the coordinates, without moving the pen."""
+        self.default_layer().point_at(x, y)
+
+    def dot_at(self, x, y):
+        """Draws a dot at the coordinates, without moving the pen."""
+        self.default_layer().dot_at(x, y)
 
     def points(self) -> Iterable[Point]:
         for graphic in self.graphics:
             yield from graphic.points()
 
     def bounds(self) -> Bounds:
-        x_min = 0
-        y_min = 0
-        x_max = 1
-        y_max = 1
+        count = 0
 
         for point in self.points():
-            if point.x < x_min:
+            if count == 0 or point.x < x_min:
                 x_min = point.x
-            if point.y < y_min:
+            if count == 0 or point.y < y_min:
                 y_min = point.y
-            if point.x > x_max:
+            if count == 0 or point.x > x_max:
                 x_max = point.x
-            if point.y > y_max:
+            if count == 0 or point.y > y_max:
                 y_max = point.y
 
-        return Bounds(
-            Point(x_min, y_min),
-            Point(x_max, y_max),
-        )
+            count += 1
+
+        if count >= 2:
+            return Bounds(
+                Point(x_min, y_min),
+                Point(x_max, y_max),
+            )
+        elif count == 1:
+            return Bounds(
+                Point(x_min - 1, y_min - 1),
+                Point(x_max + 1, y_max + 1),
+            )
+        else:
+            return Bounds(Point(0, 0), Point(1, 1))
 
     def render(self):
         bounds = self.bounds()
+
+        bounds = bounds.padded(2)
         bounds_width = bounds.max.x - bounds.min.x
         bounds_height = bounds.max.y - bounds.min.y
 
         if bounds_width > bounds_height:
-            inner_scale = MAX_SIZE / bounds_width
+            scale = MAX_SIZE / bounds_width
         else:
-            inner_scale = MAX_SIZE / bounds_height
+            scale = MAX_SIZE / bounds_height
 
-        inner_x_offset = -bounds.min.x
-        inner_y_offset = -bounds.min.y
+        to_pixel_space = Transformation(
+            scale, scale, -bounds.min.x * scale, -bounds.min.y * scale
+        )
 
-        outer_width = min(MAX_SIZE, max(MIN_SIZE, inner_scale * bounds_width))
-        outer_height = min(MAX_SIZE, max(MIN_SIZE, inner_scale * bounds_height))
+        outer_width = int(clamp(MIN_SIZE, scale * bounds_width, MAX_SIZE))
+        outer_height = int(clamp(MIN_SIZE, scale * bounds_height, MAX_SIZE))
 
         image = Image.new(
             mode="RGBA",
@@ -151,37 +260,69 @@ class Visualization:
             color=(0x00, 0x00, 0x00, 0xFF),
         )
 
-        draw = aggdraw.Draw(image)
+        def alpha_draw(f):
+            buffer = Image.new(
+                mode="RGBA",
+                size=image.size,
+                color=(0x00, 0x00, 0x00, 0x00),
+            )
 
-        for graphic in self.graphics:
+            buffer_draw = ImageDraw.Draw(buffer)
+
+            f(buffer_draw)
+
+            image.alpha_composite(buffer)
+
+        for graphic in sorted(self.graphics, key=lambda g: g.z):
             if isinstance(graphic, PathGraphic):
-                draw.line(
-                    [
-                        c
-                        for point in graphic.points()
-                        for c in (
-                            inner_scale * (inner_x_offset + point.x),
-                            inner_scale * (inner_y_offset + point.y),
-                        )
-                    ],
-                    LINE_PEN,
+                width = int(clamp(1, scale * 0.125, 16))
+
+                alpha_draw(
+                    lambda draw: draw.line(
+                        [as_tuple(to_pixel_space(point)) for point in graphic.points()],
+                        fill=graphic.color,
+                        width=width,
+                        joint="curve",
+                    )
                 )
             elif isinstance(graphic, ArrowGraphic):
-                draw.line(
-                    [
-                        c
-                        for point in graphic.points()
-                        for c in (
-                            inner_scale * (inner_x_offset + point.x),
-                            inner_scale * (inner_y_offset + point.y),
+                width = int(clamp(1, scale * 0.125, 16))
+
+                @alpha_draw
+                def _(draw):
+                    for (dx, dy) in (
+                        (-0.125, 0),
+                        (+0.125, 0),
+                        (0, 0.125),
+                        (0, -0.125),
+                        (0, 0),
+                    ):
+                        t = Transformation(1, 1, dx, dy)
+                        source = as_tuple(to_pixel_space(t(graphic.source)))
+                        target = as_tuple(to_pixel_space(graphic.target))
+                        draw.line(
+                            [source, target],
+                            fill=graphic.color,
+                            width=width,
                         )
-                    ],
-                    ARROW_PEN,
+
+            elif isinstance(graphic, DotGraphic):
+                center = to_pixel_space(graphic.center)
+
+                dot_radius = clamp(2, scale * 0.5, 32)
+                alpha_draw(
+                    lambda draw: draw.ellipse(
+                        [
+                            center.x - dot_radius,
+                            center.y - dot_radius,
+                            center.x + dot_radius,
+                            center.y + dot_radius,
+                        ],
+                        fill=graphic.color,
+                    )
                 )
             else:
                 raise TypeError(f"expected a *Graphic, but got this: {graphic!r}")
-
-        draw.flush()
 
         return image
 
@@ -209,6 +350,15 @@ class Visualization:
         root.mainloop()
 
 
+def clamp(min, x, max):
+    if x < min:
+        return min
+    elif x > max:
+        return max
+    else:
+        return x
+
+
 # A default instance, with methods exported as module functions, for ease of use.
 _default = Visualization()
 move_to = _default.move_to
@@ -216,6 +366,7 @@ line_to = _default.line_to
 point_at = _default.point_at
 dot_at = _default.dot_at
 show = _default.show
+new_layer = _default.new_layer
 
 
 def main():

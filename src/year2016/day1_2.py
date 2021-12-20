@@ -1,3 +1,4 @@
+from .. import viz
 from ..functions import run_solution
 
 input_filename = "./inputs/201601.txt"
@@ -56,6 +57,8 @@ def solution(input_lines):
 
                 current_location = (horizontal_position, vertical_position)
 
+                viz.line_to(horizontal_position, vertical_position)
+
                 if current_location in set_of_locations_visited:
                     location_found = True
                     first_location_visited_twice = current_location
@@ -72,6 +75,8 @@ def solution(input_lines):
 
         if location_found == True:
             break
+
+    viz.dot_at(first_location_visited_twice[0], first_location_visited_twice[1])
 
     distance_to_destination = abs(first_location_visited_twice[0]) + abs(
         first_location_visited_twice[1]
