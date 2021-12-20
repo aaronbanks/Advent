@@ -1,5 +1,13 @@
-def main():
-    input = 347991
+from .. import viz
+
+from ..functions import run_solution
+
+input_filename = "./inputs/201703.txt"
+expected_output = 480
+
+
+def solution(input_lines):
+    input = int(input_lines[0])
 
     previous_perimeter_end = 0
     current_perimeter_level = 0
@@ -18,6 +26,7 @@ def main():
 
     steps_to_port = abs(location_of_input[0]) + abs(location_of_input[1])
     print(steps_to_port)
+    return steps_to_port
 
 
 def location_calculator(current_perimeter_level, previous_perimeter_end, input_value):
@@ -56,4 +65,4 @@ def location_calculator(current_perimeter_level, previous_perimeter_end, input_v
 
 
 if __name__ == "__main__":
-    main()
+    run_solution(solution, input_filename, expected_output)
