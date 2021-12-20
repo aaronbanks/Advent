@@ -33,7 +33,6 @@ def solution(input_lines):
 
     result = int(checksum)
     print(result)
-
     return result
 
 
