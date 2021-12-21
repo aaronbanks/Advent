@@ -7,7 +7,8 @@ from tkinter import ttk
 from typing import Iterable, List, Optional
 
 from PIL import Image, ImageTk
-#import aggdraw
+
+# import aggdraw
 
 # Minimum and maximum pixel dimensions for the generated image.
 MAX_SIZE = 720
