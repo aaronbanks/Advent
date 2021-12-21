@@ -1,3 +1,4 @@
+from .. import viz
 from ..functions import run_solution
 
 input_filename = "./inputs/201503.txt"
@@ -18,6 +19,9 @@ def solution(input_lines):
 
     santa_toggle = True
     # santa_toggle = True means it's real santa's turn
+
+    santa_path = []
+    robo_santa_path = []
 
     for line in input_lines:
         current_line_contents = line.strip()
@@ -66,6 +70,19 @@ def solution(input_lines):
                 total_number_of_houses += 1
 
             santa_toggle = not santa_toggle
+
+            santa_path.append((santa_horizontal_position, santa_vertical_position))
+            robo_santa_path.append(
+                (robo_santa_horizontal_position, robo_santa_vertical_position)
+            )
+
+    viz.move_to(0, 0)
+    for (x, y) in santa_path:
+        viz.line_to(x, y)
+
+    viz.move_to(0, 0)
+    for (x, y) in robo_santa_path:
+        viz.line_to(x, y)
 
     print(f"The total number of houses visited is: {total_number_of_houses}")
 

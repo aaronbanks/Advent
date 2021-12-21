@@ -1,5 +1,3 @@
-from .. import viz
-
 from ..functions import run_solution
 
 input_filename = "./inputs/201703.txt"

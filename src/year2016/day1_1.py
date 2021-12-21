@@ -1,3 +1,4 @@
+from .. import viz
 from ..functions import run_solution
 
 input_filename = "./inputs/201601.txt"
@@ -46,6 +47,8 @@ def solution(input_lines):
 
                 elif current_compass_direction == "W":
                     horizontal_position -= int(instruction[1:])
+
+                viz.line_to(horizontal_position, vertical_position)
 
     distance_to_destination = abs(vertical_position) + abs(horizontal_position)
     print(f"The shortest path to the destination is {distance_to_destination} blocks")

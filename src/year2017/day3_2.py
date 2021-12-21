@@ -10,6 +10,7 @@ def solution(input_lines):
     input = int(input_lines[0])
 
     grid_positions_values = {(0, 0): 1}
+    viz.dot_at(0, 0)
     viz.move_to(0, 0)
 
     previous_perimeter_end = 1

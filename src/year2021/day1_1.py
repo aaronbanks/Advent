@@ -1,3 +1,4 @@
+from .. import viz
 from ..functions import run_solution
 
 input_filename = "./inputs/202101.txt"
@@ -21,6 +22,7 @@ def solution(input_lines):
             line_count += 1
             current_measurement = int(current_line.strip())
             print(f"Depth reading # {line_count} is {current_measurement}")
+            viz.line_to(current_measurement)
 
             if line_count == 1 or current_measurement <= previous_measurement:
                 pass

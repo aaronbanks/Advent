@@ -1,3 +1,4 @@
+from .. import viz
 from ..functions import run_solution
 
 input_filename = "./inputs/201503.txt"
@@ -35,6 +36,8 @@ def solution(input_lines):
             else:
                 set_of_houses.add(current_position)
                 total_number_of_houses += 1
+
+            viz.line_to(horizontal_position, vertical_position)
 
     print(f"The total number of houses visited is: {total_number_of_houses}")
     return total_number_of_houses
