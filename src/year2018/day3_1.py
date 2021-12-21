@@ -15,12 +15,12 @@ def solution(input_lines):
     return square_inches_with_overlapping_claim
 
 
-def determine_locations_with_overlapping_claims(list_of_component_tuples):
+def determine_locations_with_overlapping_claims(set_of_component_tuples):
 
-    locations_claimed = []
-    locations_with_overlapping_claims = [list_of_component_tuples]
+    locations_claimed = ()
+    locations_with_overlapping_claims = ()
 
-    for tuple in list_of_component_tuples:
+    for tuple in set_of_component_tuples:
         current_x_coordinate = 0
         current_y_coordinate = 0
 
@@ -30,7 +30,7 @@ def determine_locations_with_overlapping_claims(list_of_component_tuples):
         if (current_x_coordinate, current_y_coordinate) in locations_claimed:
             pass
         else:
-            locations_claimed.append((current_x_coordinate, current_y_coordinate))
+            locations_claimed.add((current_x_coordinate, current_y_coordinate))
 
         x_modifier = 0
         y_modifier = 0
@@ -48,9 +48,9 @@ def determine_locations_with_overlapping_claims(list_of_component_tuples):
                     adjusted_coordinates in locations_claimed
                     and adjusted_coordinates not in locations_with_overlapping_claims
                 ):
-                    locations_with_overlapping_claims.append(adjusted_coordinates)
+                    locations_with_overlapping_claims.add(adjusted_coordinates)
                 else:
-                    locations_claimed.append(adjusted_coordinates)
+                    locations_claimed.add(adjusted_coordinates)
 
             x_modifier += 1
 
@@ -59,7 +59,7 @@ def determine_locations_with_overlapping_claims(list_of_component_tuples):
 
 def extract_components_of_lines(input_lines):
 
-    list_of_component_tuples = []
+    set_of_component_tuples = ()
 
     for line in input_lines:
         line_components = line.split()
@@ -81,9 +81,9 @@ def extract_components_of_lines(input_lines):
 
         component_tuple = (id_component, starting_corner_component, sides_component)
 
-        list_of_component_tuples.append(component_tuple)
+        set_of_component_tuples.add(component_tuple)
 
-    return list_of_component_tuples
+    return set_of_component_tuples
 
 
 if __name__ == "__main__":
