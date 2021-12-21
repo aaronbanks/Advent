@@ -39,12 +39,15 @@ def solution(input_lines):
     for crossing in wire_crossing_locations:
             combined_distance_to_crossing[crossing] = wire_one_crossing_distances[crossing] + wire_two_crossing_distances[crossing]
 
-    lowest_combined_steps = 100000000
+    lowest_combined_steps = None
 
     for key in combined_distance_to_crossing:
-        if combined_distance_to_crossing[key] < lowest_combined_steps:
+        try:
+            if combined_distance_to_crossing[key] < lowest_combined_steps:
+                lowest_combined_steps = combined_distance_to_crossing[key]
+        except TypeError:
             lowest_combined_steps = combined_distance_to_crossing[key]
-#ANSWER 9875 is too low
+
     return lowest_combined_steps
 
 
