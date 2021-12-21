@@ -1,7 +1,7 @@
 from ..functions import run_solution
 
 input_filename = "./inputs/201903.txt"
-expected_output = None
+expected_output = 32132
 
 
 def solution(input_lines):
@@ -45,7 +45,7 @@ def solution(input_lines):
         if combined_distance_to_crossing[key] < lowest_combined_steps:
             lowest_combined_steps = combined_distance_to_crossing[key]
 #ANSWER 9875 is too low
-    print(lowest_combined_steps)
+    return lowest_combined_steps
 
 
 def find_distance_to_each_crossing(wire, wire_crossing_locations):
@@ -81,6 +81,7 @@ def find_distance_to_each_crossing(wire, wire_crossing_locations):
         elif direction_modifier == "D":
             for move in range(movement_value):
                 current_y_coordinate -= 1
+                distance_traveled_on_wire += 1
                 current_location = (current_x_coordinate, current_y_coordinate)
 
                 if current_location in wire_crossing_locations:
@@ -94,6 +95,7 @@ def find_distance_to_each_crossing(wire, wire_crossing_locations):
         elif direction_modifier == "L":
             for move in range(movement_value):
                 current_x_coordinate -= 1
+                distance_traveled_on_wire += 1
                 current_location = (current_x_coordinate, current_y_coordinate)
 
                 if current_location in wire_crossing_locations:
@@ -107,6 +109,7 @@ def find_distance_to_each_crossing(wire, wire_crossing_locations):
         elif direction_modifier == "R":
             for move in range(movement_value):
                 current_x_coordinate += 1
+                distance_traveled_on_wire += 1
                 current_location = (current_x_coordinate, current_y_coordinate)
 
                 if current_location in wire_crossing_locations:
