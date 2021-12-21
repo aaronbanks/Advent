@@ -17,8 +17,8 @@ def solution(input_lines):
 
 def determine_locations_with_overlapping_claims(set_of_component_tuples):
 
-    locations_claimed = ()
-    locations_with_overlapping_claims = ()
+    locations_claimed = set()
+    locations_with_overlapping_claims = set()
 
     for tuple in set_of_component_tuples:
         current_x_coordinate = 0
@@ -59,7 +59,7 @@ def determine_locations_with_overlapping_claims(set_of_component_tuples):
 
 def extract_components_of_lines(input_lines):
 
-    set_of_component_tuples = ()
+    set_of_component_tuples = set()
 
     for line in input_lines:
         line_components = line.split()

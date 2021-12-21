@@ -1,19 +1,14 @@
+import sys
 from itertools import cycle
 from dataclasses import dataclass, astuple as as_tuple, field
 from abc import ABC, abstractmethod
-from random import random
 
 import tkinter as tk
 from tkinter import ttk
+from tkinter.filedialog import asksaveasfile as ask_save_as_file
 from typing import Any, Iterable, List, Optional
 
-<<<<<<< HEAD
-from PIL import Image, ImageTk
-
-# import aggdraw
-=======
 from PIL import Image, ImageTk, ImageDraw
->>>>>>> 604aceb30f7126aa508d78101db8dfd64faac7ed
 
 # Minimum and maximum pixel dimensions for the generated image.
 MAX_SIZE = 720
@@ -22,10 +17,9 @@ MIN_SIZE = 90
 default_line_colors = iter(
     cycle(
         [
-            (0xFF, 0xFF, 0xFF, 0xE0),
-            (0x80, 0xFF, 0xD0, 0xE0),
-            (0xD0, 0x80, 0xFF, 0xE0),
-            (0x80, 0xD0, 0xFF, 0xE0),
+            (0x80, 0xFF, 0xD0, 0xFF),
+            (0xD0, 0x80, 0xFF, 0xFF),
+            (0x80, 0xD0, 0xFF, 0xFF),
         ]
     )
 )
@@ -33,9 +27,9 @@ default_line_colors = iter(
 default_arrow_colors = iter(
     cycle(
         [
-            (0x80, 0xD0, 0xFF, 0x40),
-            (0xFF, 0x80, 0xD0, 0x40),
-            (0xD0, 0xFF, 0x80, 0x40),
+            (0x80, 0xFF, 0xD0, 0x80),
+            (0xD0, 0x80, 0xFF, 0x80),
+            (0x80, 0xD0, 0xFF, 0x80),
         ]
     )
 )
@@ -43,9 +37,9 @@ default_arrow_colors = iter(
 default_dot_colors = iter(
     cycle(
         [
-            (0xFF, 0xD0, 0x00, 0xD0),
-            (0xD0, 0x00, 0xFF, 0xD0),
-            (0x00, 0xFF, 0xD0, 0xD0),
+            (0xC0, 0xFF, 0xE0, 0xFF),
+            (0xE0, 0xC0, 0xFF, 0xFF),
+            (0xC0, 0xE0, 0xFF, 0xFF),
         ]
     )
 )
@@ -241,7 +235,7 @@ class Visualization:
         else:
             return Bounds(Point(0, 0), Point(1, 1))
 
-    def render(self):
+    def render(self, oversample=1):
         bounds = self.bounds()
 
         bounds = bounds.padded(2)
@@ -249,16 +243,16 @@ class Visualization:
         bounds_height = bounds.max.y - bounds.min.y
 
         if bounds_width > bounds_height:
-            scale = MAX_SIZE / bounds_width
+            scale = int(MAX_SIZE * oversample) / bounds_width
         else:
-            scale = MAX_SIZE / bounds_height
+            scale = int(MAX_SIZE * oversample) / bounds_height
 
         to_pixel_space = Transformation(
             scale, scale, -bounds.min.x * scale, -bounds.min.y * scale
         )
 
-        outer_width = int(clamp(MIN_SIZE, scale * bounds_width, MAX_SIZE))
-        outer_height = int(clamp(MIN_SIZE, scale * bounds_height, MAX_SIZE))
+        outer_width = int(scale * bounds_width)
+        outer_height = int(scale * bounds_height)
 
         image = Image.new(
             mode="RGBA",
@@ -281,7 +275,7 @@ class Visualization:
 
         for graphic in sorted(self.graphics, key=lambda g: g.z):
             if isinstance(graphic, PathGraphic):
-                width = int(clamp(1, scale * 0.125, 16))
+                width = int(clamp(1, scale * 0.25, 16))
 
                 alpha_draw(
                     lambda draw: draw.line(
@@ -296,26 +290,18 @@ class Visualization:
 
                 @alpha_draw
                 def _(draw):
-                    for (dx, dy) in (
-                        (-0.125, 0),
-                        (+0.125, 0),
-                        (0, 0.125),
-                        (0, -0.125),
-                        (0, 0),
-                    ):
-                        t = Transformation(1, 1, dx, dy)
-                        source = as_tuple(to_pixel_space(t(graphic.source)))
-                        target = as_tuple(to_pixel_space(graphic.target))
-                        draw.line(
-                            [source, target],
-                            fill=graphic.color,
-                            width=width,
-                        )
+                    source = as_tuple(to_pixel_space(graphic.source))
+                    target = as_tuple(to_pixel_space(graphic.target))
+                    draw.line(
+                        [source, target],
+                        fill=graphic.color,
+                        width=width,
+                    )
 
             elif isinstance(graphic, DotGraphic):
                 center = to_pixel_space(graphic.center)
 
-                dot_radius = clamp(2, scale * 0.5, 32)
+                dot_radius = clamp(2, scale * 0.4, 32)
                 alpha_draw(
                     lambda draw: draw.ellipse(
                         [
@@ -332,24 +318,45 @@ class Visualization:
 
         return image
 
-    def show(self):
+    def show(self, oversample=4):
         """Opens a window to display the current state of the visualization.
 
         This blocks the script until the window is closed.
         """
 
-        image = self.render()
+        image = self.render(oversample=oversample)
 
         root = tk.Tk()
-        root.title("Advent of Code")
+        root.title(f"Visualization - {sys.argv[0]}")
         root.resizable(False, False)
 
-        tk_image = ImageTk.PhotoImage(image)
+        scaled_image = image.resize(
+            (
+                int(image.width / oversample),
+                int(image.height / oversample),
+            ),
+            Image.BICUBIC,
+        )
+        tk_image = ImageTk.PhotoImage(scaled_image)
         panel = ttk.Label(root, image=tk_image)
         panel.pack(fill="both", expand="yes")
 
+        def save_as():
+            target_file = ask_save_as_file(
+                defaultextension="png",
+                mode="wb",
+                filetypes=[("PNG Image", "*.png")],
+                title="Save Visualization As…",
+            )
+            if target_file is not None:
+                scaled_image.save(target_file)
+
+        save_button = ttk.Button(root, text="Save As…", command=save_as)
+        save_button.pack(fill="both", expand="yes", ipady=4)
+        save_button.focus_set()
+
         close_button = ttk.Button(root, text="Close", command=root.destroy)
-        close_button.pack(fill="both", expand="yes")
+        close_button.pack(fill="both", expand="yes", ipady=4)
         close_button.focus_set()
 
         root.focus_force()
