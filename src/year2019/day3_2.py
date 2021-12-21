@@ -17,7 +17,9 @@ def solution(input_lines):
             set_of_first_wire_locations = analyze_wire_one(wire)
 
         if wire_count == 2:
-            set_of_crossing_wire_locations = analyze_wire_two(wire, set_of_first_wire_locations)
+            set_of_crossing_wire_locations = analyze_wire_two(
+                wire, set_of_first_wire_locations
+            )
 
     wire_crossing_locations = list(set_of_crossing_wire_locations)
 
@@ -30,14 +32,21 @@ def solution(input_lines):
         wire_count += 1
 
         if wire_count == 1:
-                wire_one_crossing_distances = find_distance_to_each_crossing(wire, wire_crossing_locations)
+            wire_one_crossing_distances = find_distance_to_each_crossing(
+                wire, wire_crossing_locations
+            )
         if wire_count == 2:
-                wire_two_crossing_distances = find_distance_to_each_crossing(wire, wire_crossing_locations)
+            wire_two_crossing_distances = find_distance_to_each_crossing(
+                wire, wire_crossing_locations
+            )
 
     combined_distance_to_crossing = {}
 
     for crossing in wire_crossing_locations:
-            combined_distance_to_crossing[crossing] = wire_one_crossing_distances[crossing] + wire_two_crossing_distances[crossing]
+        combined_distance_to_crossing[crossing] = (
+            wire_one_crossing_distances[crossing]
+            + wire_two_crossing_distances[crossing]
+        )
 
     lowest_combined_steps = None
 
@@ -79,7 +88,9 @@ def find_distance_to_each_crossing(wire, wire_crossing_locations):
                     for location in wire_crossing_locations:
                         location_counter += 1
                         if location == current_location:
-                            dict_of_crossing_distances[location] = distance_traveled_on_wire
+                            dict_of_crossing_distances[
+                                location
+                            ] = distance_traveled_on_wire
 
         elif direction_modifier == "D":
             for move in range(movement_value):
@@ -93,7 +104,9 @@ def find_distance_to_each_crossing(wire, wire_crossing_locations):
                     for location in wire_crossing_locations:
                         location_counter += 1
                         if location == current_location:
-                            dict_of_crossing_distances[location] = distance_traveled_on_wire
+                            dict_of_crossing_distances[
+                                location
+                            ] = distance_traveled_on_wire
 
         elif direction_modifier == "L":
             for move in range(movement_value):
@@ -107,7 +120,9 @@ def find_distance_to_each_crossing(wire, wire_crossing_locations):
                     for location in wire_crossing_locations:
                         location_counter += 1
                         if location == current_location:
-                            dict_of_crossing_distances[location] = distance_traveled_on_wire
+                            dict_of_crossing_distances[
+                                location
+                            ] = distance_traveled_on_wire
 
         elif direction_modifier == "R":
             for move in range(movement_value):
@@ -121,9 +136,12 @@ def find_distance_to_each_crossing(wire, wire_crossing_locations):
                     for location in wire_crossing_locations:
                         location_counter += 1
                         if location == current_location:
-                            dict_of_crossing_distances[location] = distance_traveled_on_wire
+                            dict_of_crossing_distances[
+                                location
+                            ] = distance_traveled_on_wire
 
     return dict_of_crossing_distances
+
 
 def analyze_wire_one(wire):
     current_x_coordinate = 0
@@ -163,6 +181,7 @@ def analyze_wire_one(wire):
                 set_of_wire_locations.add(current_location)
 
     return set_of_wire_locations
+
 
 def analyze_wire_two(wire, set_of_first_wire_locations):
     current_x_coordinate = 0
@@ -206,6 +225,7 @@ def analyze_wire_two(wire, set_of_first_wire_locations):
                     crossing_wire_locations.add(current_location)
 
     return crossing_wire_locations
+
 
 if __name__ == "__main__":
     run_solution(solution, input_filename, expected_output)
