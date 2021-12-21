@@ -27,7 +27,7 @@ def solution(input_lines):
         disatnce_to_port = abs(location[0]) + abs(location[1])
         list_of_distances_to_port.append(disatnce_to_port)
 
-    answer = max(list_of_distances_to_port)
+    answer = min(list_of_distances_to_port)
     print(answer)
 
 def analyze_wire_one(wire):
