@@ -8,7 +8,6 @@ def solution(input_lines):
 
     return equate_solution(*find_winning_card_and_trigger_number(*process_input(input_lines)))
     
-
 def process_input(input_lines):
 
     dict_of_bingo_cards = {}
@@ -52,16 +51,16 @@ def find_winning_card_and_trigger_number(bingo_numbers, dict_of_bingo_cards):
     for number in bingo_numbers:
         bingo_numbers_read += 1
 
-        for key in dict_of_bingo_cards:
-            for row in key:
+        for key,value in dict_of_bingo_cards.entries():
+            for index,row in enumerate(value):
                 for column in row:
             
                     if number == column:
-                        key[row][column] = "X"
+                        key[index][column] = "X"
         
         if bingo_numbers_read > 4:
 
-            for key in dict_of_bingo_cards:
+            for key,value in dict_of_bingo_cards.entries():
 
                 dict_of_column_values = {}
 
@@ -72,7 +71,7 @@ def find_winning_card_and_trigger_number(bingo_numbers, dict_of_bingo_cards):
                 dict_of_column_values["column_5"] = []
 
                 
-                for row in key: 
+                for row in value: 
                     column_counter = 0
 
                     for number in row:
@@ -94,10 +93,10 @@ def find_winning_card_and_trigger_number(bingo_numbers, dict_of_bingo_cards):
                         bingo = True
                         break
 
-                if bingo == False:
-                    return "ERROR NO BINGO"
+            if bingo == False:
+                raise "ERROR NO BINGO"
 
-                return (bingo_trigger_number, winning_bingo_card)
+            return (bingo_trigger_number, winning_bingo_card)
                 
 def equate_solution(bingo_trigger_number, winning_bingo_card):
     sum_of_unmarked_numbers = 0
