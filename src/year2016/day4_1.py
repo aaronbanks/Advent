@@ -30,7 +30,10 @@ def solution(input_lines):
 
             if chunk_counter == number_of_chunks:
 
-                sorted_dict = sorted(dict_of_letter_and_repetition_pairs.items(), key=lambda x: (-x[1], x[0]))
+                sorted_dict = sorted(
+                    dict_of_letter_and_repetition_pairs.items(),
+                    key=lambda x: (-x[1], x[0]),
+                )
 
                 print("DO WE GET TO SORTE#D", sorted_dict)
                 list_of_five_most_common_characters = sorted_dict[0:5]
@@ -44,7 +47,7 @@ def solution(input_lines):
                 sector_id = int(sector_id_and_checksum[0])
                 print(sector_id)
 
-                checksum = (sector_id_and_checksum[1].strip("]"))
+                checksum = sector_id_and_checksum[1].strip("]")
                 print(checksum)
 
             else:
@@ -70,6 +73,7 @@ def solution(input_lines):
 
     print(sum_of_sector_ids_from_real_rooms)
     return sum_of_sector_ids_from_real_rooms
+
 
 if __name__ == "__main__":
     run_solution(solution, input_filename, expected_output)

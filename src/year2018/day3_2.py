@@ -3,30 +3,19 @@ from ..functions import run_solution
 input_filename = "./inputs/201803.txt"
 expected_output = None
 
-#ANSWER 84013 is too low
-#ANSWER 117127 is too high
+# ANSWER 84013 is too low
+# ANSWER 117127 is too high
+
 
 def solution(input_lines):
 
     list_of_component_tuples = extract_components_of_lines(input_lines)
 
-    square_inches_with_overlapping_claim = determine_locations_with_overlapping_claims(list_of_component_tuples)
+    square_inches_with_overlapping_claim = determine_locations_with_overlapping_claims(
+        list_of_component_tuples
+    )
 
     return square_inches_with_overlapping_claim
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def determine_locations_with_overlapping_claims(set_of_component_tuples):

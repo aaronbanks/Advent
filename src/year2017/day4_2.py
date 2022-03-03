@@ -3,6 +3,7 @@ from ..functions import run_solution
 input_filename = "./inputs/201704.txt"
 expected_output = 265
 
+
 def solution(input_lines):
 
     valid_passphrases = 0
@@ -30,13 +31,14 @@ def solution(input_lines):
                 if number_of_anagram_matches > 1:
                     anagram_exsists = True
                     break
-        
+
         if anagram_exsists == False:
             valid_passphrases += 1
 
-    print (f"{valid_passphrases}")
+    print(f"{valid_passphrases}")
 
     return valid_passphrases
+
 
 if __name__ == "__main__":
     run_solution(solution, input_filename, expected_output)

@@ -3,8 +3,9 @@ from ..functions import run_solution
 input_filename = "./inputs/201803.txt"
 expected_output = None
 
-#ANSWER 84013 is too low
-#ANSWER 117127 is too high
+# ANSWER 84013 is too low
+# ANSWER 117127 is too high
+
 
 def solution(input_lines):
 

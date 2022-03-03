@@ -15,7 +15,7 @@ def solution(input_lines):
     currnt_position_in_list = 0
 
     while True:
-        
+
         try:
             store_current_position = currnt_position_in_list
             currnt_position_in_list += instruction_list[currnt_position_in_list]
@@ -28,6 +28,7 @@ def solution(input_lines):
             break
 
     return steps_taken
+
 
 if __name__ == "__main__":
     run_solution(solution, input_filename, expected_output)

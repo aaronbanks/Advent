@@ -3,6 +3,7 @@ from ..functions import run_solution
 input_filename = "./inputs/202004.txt"
 expected_output = None
 
+
 def solution(input_lines):
 
     for current_line in input_lines:
