@@ -18,16 +18,35 @@ def main():
 
 
 def two_adjacent_the_same(str_of_number):
-
+    # must be two adjacent the same that aren't part of a longer set.
     digit_tracker = 0
 
     for digit in str_of_number:
 
         try:
             if digit == str_of_number[digit_tracker + 1]:
-                return True
-            else:
-                pass
+                try:
+                    if (
+                        str_of_number[digit_tracker + 1]
+                        == str_of_number[digit_tracker + 2]
+                    ):
+                        pass
+                    else:
+                        try:
+                            if digit != str_of_number[digit_tracker - 1]:
+                                return True
+                            else:
+                                pass
+                        except IndexError:
+                            return True
+                except IndexError:
+                    if digit != str_of_number[digit_tracker - 1]:
+                        return True
+                    else:
+                        pass
+
+                else:
+                    pass
 
         except IndexError:
             pass
