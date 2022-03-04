@@ -1,7 +1,7 @@
 from ..functions import run_solution
 
 input_filename = "./inputs/201706.txt"
-expected_output = 12841
+expected_output = 0
 
 
 def solution(input_lines):
@@ -13,6 +13,10 @@ def solution(input_lines):
     set_of_bank_configurations = {tuple(bank_block_allocation)}
 
     cycles_completed = 0
+
+    repeating_pattern = []
+    cycles_in_infinate_loop = 0
+    inside_infinate_loop = False
 
     while True:
 
@@ -34,9 +38,22 @@ def solution(input_lines):
 
         cycles_completed += 1
 
+        if inside_infinate_loop == True:
+            cycles_in_infinate_loop += 1
+            print(bank_block_allocation)
+
+            # THE ISSUE IS ON THE BELOW LLINE, NEED TO FIGURE OUT HOW TO COMPAIR THESE TWO LISTS
+            if bank_block_allocation == repeating_pattern:
+                print(
+                    f"Each iteration of the infinite loop contains: {cycles_in_infinate_loop} cycles"
+                )
+                return cycles_in_infinate_loop
+
         if tuple(bank_block_allocation) in set_of_bank_configurations:
-            print(f"Infinate loop is detected at the end of cycle #{cycles_completed}")
-            return 12841
+            print(f"Infinite loop is detected at the end of cycle #{cycles_completed}")
+            repeating_pattern = bank_block_allocation
+            inside_infinate_loop = True
+            print(bank_block_allocation)
 
         else:
             set_of_bank_configurations.add(tuple(bank_block_allocation))
